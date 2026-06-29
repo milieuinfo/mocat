@@ -8,9 +8,9 @@
         // All config options at https://respec.org/docs/
         var respecConfig = {
             specStatus: "unofficial",
-            latestVersion: "https://stijngoedertier.github.io",
-            edDraftURI: "https://stijngoedertier.github.io",
-            commitHistoryURL: "https://github.com/stijngoedertier/stijngoedertier.github.io/commits/main",
+            latestVersion: "https://milieuinfo.github.io",
+            edDraftURI: "https://milieuinfo.github.io",
+            commitHistoryURL: "https://github.com/milieuinfo/mocat/commits/main",
             logos: [{
                 src: "./img/x-cite-logo.svg",
                 alt: "x-CITE",
@@ -28,6 +28,9 @@
                 name: "Veerle Timmermans",
                 url: "http://your-site.com",
             }, {
+                name: "Karen Bosmans",
+                url: "http://your-site.com",
+            }, {
                 name: "Geert Van Haute",
                 url: "http://your-site.com",
             }, {
@@ -39,7 +42,7 @@
             }],
             github: {
                 branch: "main",
-                repoURL: "https://github.com/stijngoedertier/stijngoedertier.github.io",
+                repoURL: "https://github.com/milieuinfo/mocat",
             },
             // See https://respec.org/docs/#xref for usage.
             xref: "web-platform",
@@ -54,6 +57,12 @@
                     href: "https://xcitecitiverse.eu/citiverse/",
                     url: "https://xcitecitiverse.eu/wp-content/uploads/2025/10/x-CITE_D1.1_V1.0.pdf",
                     authors: ["Hugo Kerschot", "Esa Kokkonen", "All consortium partners"],
+                },
+                "EOAP": {
+                    title: "Earth Observation Application Package ",
+                    href: "https://github.com/eoap",
+                    url: "https://github.com/eoap",
+                    authors: ["EOAP"],
                 }
             },
             license: "cc-by",
@@ -82,6 +91,54 @@
 </section>
 <section id="requirements" class="informative">
     <h2>Requirements</h2>
+
+    <p>Although generally applicable, our source of requirements for this vocabulary originates from the domain of
+        <strong>spatial planning</strong> and <strong>environmental permit management</strong> in the public sector.
+        In both fields, a wide variety of simulation models are being used to assess the environmental impact of
+        changes on, for example, traffic flows, air quality, water quality, noise, erosion, water levels, or emission of
+        greenhouse gasses.
+        In this context, we look at a <strong>distributed systems</strong>: the systems for running simulation models
+        are
+        separate from the system of environmental permit management or spatial planning.
+        This distributed systems architecture stems from the variety and complexity of simulation models, making it
+        impractical to embed them in a monolithic system.
+        Another reason is that there are typically multiple service providers (both businesses or public
+        administrations) that provide specific simulation models.
+        The impact assessment can be carried out <i>before</i> an environmental permit is formally requested
+        to pre-assess the impact of the proposed changes (preparatory phase), or <i>after</i> the formal request has
+        been submitted to underpin the decision process (evaluation phase).
+        The simulation runs that are used in the decision-making process must be reproducible this requires that all
+        information regarding input datasets, context, exact model version is persisted and available for inspection.
+        Depending on the context, the impact assessment can be carried out by the public administration, business or
+        citizen.
+    </p>
+
+
+    <figure>
+  <pre class="diagram mermaid">
+---
+config:
+  look: handDrawn
+---
+flowchart LR
+    Administration([👤 Administration])
+    Business([👤 Business])
+    Citizen([👤 Citizen])
+    EnvPermitSystem{{Environmental Permit System}}
+    SimSys1{{Simulation system 1}}
+    SimSys2{{Simulation system 2}}
+    SimSysN{{Simulation system N}}
+
+    Administration --> EnvPermitSystem
+    Business --> EnvPermitSystem
+    Citizen --> EnvPermitSystem
+
+    EnvPermitSystem --> SimSys1
+    EnvPermitSystem --> SimSys2
+    EnvPermitSystem --> SimSysN
+
+  </pre>
+    </figure>
 
     <section id="uc-discover"></section>
     <h2>Discover simulation models</h2>
@@ -128,18 +185,17 @@
     <h2>Start a simulation run via a universal interface</h2>
     <p>It must be possible to run simulation models via a universal Application Programming Interface (API).
         The input and output parameters of the API methods are based on a common metamodel.
-        A user can configure and execute a simulation run, inspect the results (output datasets) of previous simulation
-        runs, etc.</p>
-    <p>Metadata represents the algorithm of a simulation model as a number of steps
-        and their execution logic. This makes the internal functioning of a simulation model
-        accessible in a standardized way. Ontologies such as [[P-PLAN]] can be a basis for this.</p>
+        A user can configure and execute a simulation run via a standardized interface.
+        The execution must be asynchronous, allowing for manual interventions (e.g. calibration of input data)
+        prior to executing the model.</p>
 
 
     <section id="uc-reproduce-run"></section>
-    <h2>Make a simulation run reproducible</h2>
+    <h2>Reproduce a simulation run</h2>
     <p>Metadata captures version history, parameter sets, data provenance, and software dependencies so that
         simulation results can be reproduced, audited, or certified, even when original creators are no longer
         involved. [[PROV-O]]</p>
+    <p>In the context of spatial planning and environmental permit management, this use case is important. </p>
 
 </section>
 
