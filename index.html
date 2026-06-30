@@ -79,11 +79,12 @@
     </script>
 </head>
 <body>
-<h1 id="title">Simulation model catalog vocabulary</h1>
+<h1 id="title">Simulation model vocabulary and API</h1>
 <section id='abstract'>
     <p>
-        MoCAT is a vocabulary for describing simulation models. This document lists the requirements,
-        defines the schema and provides examples.
+        MoCAT is a vocabulary for describing simulation models and an open API specification for interacting with
+        simulation tools.
+        This document lists the requirements, defines the vocabulary and API and provides an implementation report.
     </p>
     <p>
         A simulation model is a tool to make a digital representation of a real-world phenomenon in nature,
@@ -94,6 +95,8 @@
     <p>
         A common vocabulary for describing simulation models on the Web enhances its discoverability and automation
         potential.
+        A generic API makes it possible to interact with simulation models in a standardized way, which can considerably
+        reduce the effort required for a consumer to interact with a new provider.
     </p>
 </section>
 <section id="requirements" class="informative">
@@ -105,10 +108,9 @@
         changes on, for example, traffic flows, air quality, water quality, noise, erosion, water levels, or emission of
         greenhouse gasses.
         In this context, we look at a <strong>distributed systems</strong>: the systems for running simulation models
-        are
-        separate from the system of environmental permit management or spatial planning.
-        This distributed systems architecture stems from the variety and complexity of simulation models, making it
-        impractical to embed them in a monolithic system.
+        are separate from the system of environmental permit management or spatial planning.
+        This stems from the variety and complexity of simulation models, making it impractical to embed them in a
+        monolithic system.
         Another reason is that there are typically multiple service providers (both businesses or public
         administrations) that provide specific simulation models.
         The impact assessment can be carried out <i>before</i> an environmental permit is formally requested
@@ -131,7 +133,8 @@ flowchart LR
     Administration([👤 Administration])
     Business([👤 Business])
     Citizen([👤 Citizen])
-    EnvPermitSystem{{Environmental Permit System}}
+    EnvPermitSystem{{Environmental Permit System
+      Spatial Planning System}}
     SimSys1{{Simulation system 1}}
     SimSys2{{Simulation system 2}}
     SimSysN{{Simulation system N}}
@@ -145,48 +148,54 @@ flowchart LR
     EnvPermitSystem --> SimSysN
 
   </pre>
+        <figcaption>Use of simulation model services in the public sector.</figcaption>
     </figure>
 
     <section id="uc-discover"></section>
     <h2>Discover simulation models</h2>
 
-    <p>Users can discover simulation models by searching for and comparing simulation models using various descriptive
-        metadata
-        fields:
+    <p>Users must be able to discover simulation models by searching for and comparing simulation models using various
+        descriptive metadata fields of which title, description, download URL and service endpoint are the most
+        important.
+        Other fields can be keywords, usage constraints, ownership, licensing information,
+        quality assessments [[VOCAB-DQV]], compliance with standards, source code repository URL,
+        release URL, invocation mode (whether results of a simulation run are presented synchronously
+        or asynchronously to a user).
     </p>
-    <ul>
-        <li>title</li>
-        <li>description</li>
-        <li>keywords</li>
-        <li>domain</li>
-        <li>legal constraints</li>
-        <li>usage constraints</li>
-        <li>ownership</li>
-        <li>licensing</li>
-        <li>quality assessments such as those in the [[VOCAB-DQV]]</li>
-        <li>validation reports</li>
-        <li>Compliance with internal or regulatory standards.
-            For example, Departement Omgeving speaks of "MER compliance".
-        </li>
-        <li>source code repository URL</li>
-        <li>releases URL</li>
-        <li>collaboration</li>
-        <li>data services</li>
-        <li>Algorithm</li>
-        <li>Invocation mode: whether results of a simulation run are presented synchronously or asynchronously to a
-            user.
-        </li>
-        <li>Service endpoints: the service endpoints where agents are available to execute a simulation run.</li>
-    </ul>
 
-    <p>A simulation model is the whole of method, algorithm, implemented in software, documentation, etc.
+    <p>A simulation model is the <i>whole</i> of method, algorithm, implemented in software, documentation, etc.
         A simulation model can be used as software or as a service.</p>
+
+    <p>In the domain of environmental impact assessment, simulation models can be catalogued in an (open) data
+        catalogue.
+        The need for enhancing the discoverability of simulation tools stems from the fact that there is an increasing
+        number of providers and consumers.
+    </p>
 
 
     <section id="uc-test-interoperability"></section>
     <h2>Test interoperability of input datasets</h2>
-    <p>Users must be able to assess via automated reasoning which input datasets are compatible with a
-        simulation model based on the data specification.</p>
+
+    <p>A simulation model service may have severa types of input data:
+    <ul>
+        <li>Spatial data: transport networks, spatial features, topological relationships</li>
+        <li>Entity definitions: nodes, machines, people, vehicles</li>
+        <li>Physical properties: noise characteristics, material characteristics, carbon storage parameters, etc.</li>
+        <li>Initial state: starting positions, starting inventory</li>
+        <li>Behavioural characteristics:</li>
+        <li>Scenario data: change of which the impact is assessed: for example, reforestation on CO2 emissions,
+            buffer zones on soil erosion.
+            Particularly, this input is often provided by the consumer of a simulation model.
+        </li>
+    </ul>
+    Users must be able to assess via automated reasoning which input datasets are compatible with a
+    simulation model based on the data specification.</p>
+
+    <p>In the context of spatial planning and environmental permit management, the consumer of a simulation model most
+        often only needs to be concerned with providing the correct scenario data to the simulation model.
+        Each simulation model service has a different way of encoding these scenarios in data.
+
+    </p>
 
     <section id="uc-api"></section>
     <h2>Start a simulation run via a universal interface</h2>
@@ -208,6 +217,7 @@ flowchart LR
 
 <section id="overview" class="informative">
     <h2>Vocabulary overview</h2>
+    <!--
     <div class="note" role="note" id="note0">
         <div role="heading" class="note-title marker" id="h-note-3" aria-level="4"><span>Requirments first</span></div>
         <aside class="">
@@ -217,6 +227,7 @@ flowchart LR
             </p>
         </aside>
     </div>
+    -->
 
 
     <figure>
@@ -257,6 +268,7 @@ classDiagram
         dct:publisher
         dct:issued
         dct:modified
+        dcat:endpointURL
     }
 
     class SimulationRun["SimulationRun
