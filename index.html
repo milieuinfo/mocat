@@ -70,6 +70,13 @@
             preProcess: [window.respecMermaid.createFigures]
         };
     </script>
+    <script class='remove'>
+        function openIframe() {
+            const url = 'swagger-editor.html';
+            console.log("openIframe", url);
+            window.open(url, "_blank");
+        }
+    </script>
 </head>
 <body>
 <h1 id="title">Simulation model catalog vocabulary</h1>
@@ -685,6 +692,25 @@ omg-distribution:osm_tn_geojson
 
 </section>
 
+<section id="oas" class="normative">
+    <h2>Open API specification</h2>
+    <p>
+
+    </p>
+    <div style="position:relative; width:500px; height:500px;">
+        <iframe width="500px" height="500px" src="swagger-editor.html"
+                title="Simulation Model API"></iframe>
+        <div onclick="openIframe()"
+             style="
+            position:absolute;
+            top:0; left:0;
+            width:100%; height:100%;
+            cursor:pointer;
+            background:rgba(0,0,0,0);
+         ">
+        </div>
+    </div>
+</section>
 
 <section id="implementation" class="informative">
     <h1>Implementation report</h1>
@@ -715,7 +741,7 @@ omg-distribution:osm_tn_geojson
 
         <aside class="example" title="SPARQL query">
         <pre>
-PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX prov: &lt,http://www.w3.org/ns/prov#&gt;
 SELECT ?s ?p ?o
 WHERE {?s a prov:Plan.
 ?s ?p ?o}
