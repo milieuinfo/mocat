@@ -129,12 +129,13 @@
 config:
   look: handDrawn
 ---
-flowchart LR
+graph LR
     Administration([👤 Administration])
     Business([👤 Business])
     Citizen([👤 Citizen])
     EnvPermitSystem{{Environmental Permit System
       Spatial Planning System}}
+    MER{{"MER Impact Assessment System"}}
     SimSys1{{Simulation system 1}}
     SimSys2{{Simulation system 2}}
     SimSysN{{Simulation system N}}
@@ -767,7 +768,7 @@ config:
   look: handDrawn
   htmlLabels: false
 ---
-flowchart LR
+graph LR
     git[("***git source repo***")]
     build_engine["`***build engine***
       (Jenkins)`"]
@@ -790,13 +791,14 @@ flowchart LR
 
 
     <figure>
-  <pre class="diagram mermaid">---
+  <pre class="diagram mermaid">
+---
 config:
   layout: elk
   look: handDrawn
   htmlLabels: false
 ---
-flowchart LR
+graph LR
     triplestore[("***Triplestore***")]
     lod_endpoint["`***LOD endpoint***
       data.omgeving.vlaanderen.be`"]
@@ -814,6 +816,66 @@ flowchart LR
 
 
     <h3>Start a simulation run via a universal interface</h3>
+
+    We will implement the Simulation Model API to start simulation runs and assess the impact of scenarios of future land
+    use change on emission of greenhouse gasses.
+
+    <figure>
+    <pre class="diagram mermaid">
+---
+config:
+  theme: 'base'
+---
+flowchart LR
+    user([👤 User])
+    system("system")
+
+    subgraph S3["S3 storage (MinIO)"]
+        lucat["Land use categories dataset"]
+        lu["Land use dataset"]
+        param["Parameters dataset"]
+        cr["Carbon reservoir dataset"]
+        dc["Delta carbon dataset"]
+        crt["CRT dataset"]
+        scenarios["Future policy scenario's (WEM, WAM, WOM)"]
+    end
+
+    subgraph k8s["Kubernetes Cluster"]
+        subgraph API["API"]
+            api["Run simulation model "]
+        end
+        subgraph Argo["Argo Workflows"]
+            workflow["Workflow"]
+        end
+        subgraph spark["Spark pod"]
+            driver["Spark Driver"]
+            executor1["Spark Executor 1"]
+            executor2["Spark Executor 2"]
+            executorN["Spark Executor N"]
+        end
+    end
+
+    system --> api
+    user --> workflow
+    api --> driver
+    workflow --> driver
+    lu --> spark
+    param --> spark
+    scenarios --> spark
+    driver --> executor1
+    lucat --> spark
+    driver --> executor2
+    driver --> executorN
+    driver --> dc
+    driver --> cr
+    executor1 --> driver
+    executor2 --> driver
+    executorN --> driver
+    driver --> crt
+
+    </pre>
+        <figcaption>Start a simulation run</figcaption>
+    </figure>
 
 </section>
 
