@@ -8,9 +8,9 @@
         // All config options at https://respec.org/docs/
         var respecConfig = {
             specStatus: "unofficial",
-            latestVersion: "https://stijngoedertier.github.io",
-            edDraftURI: "https://stijngoedertier.github.io",
-            commitHistoryURL: "https://github.com/stijngoedertier/stijngoedertier.github.io/commits/main",
+            latestVersion: "https://metadata-ontwikkel.omgeving.vlaanderen.be/srv/api/records/2ae121ce-d8df-4326-8bfe-8a75aa28cbe0/attachments/index.html",
+            edDraftURI: "https://github.com/milieuinfo/mocat/commits/main",
+            commitHistoryURL: "https://github.com/milieuinfo/mocat/commits/main",
             logos: [{
                 src: "./img/x-cite-logo.svg",
                 alt: "x-CITE",
@@ -28,6 +28,9 @@
                 name: "Veerle Timmermans",
                 url: "http://your-site.com",
             }, {
+                name: "Karen Bosmans",
+                url: "http://your-site.com",
+            }, {
                 name: "Geert Van Haute",
                 url: "http://your-site.com",
             }, {
@@ -39,7 +42,7 @@
             }],
             github: {
                 branch: "main",
-                repoURL: "https://github.com/stijngoedertier/stijngoedertier.github.io",
+                repoURL: "https://github.com/milieuinfo/mocat",
             },
             // See https://respec.org/docs/#xref for usage.
             xref: "web-platform",
@@ -54,6 +57,12 @@
                     href: "https://xcitecitiverse.eu/citiverse/",
                     url: "https://xcitecitiverse.eu/wp-content/uploads/2025/10/x-CITE_D1.1_V1.0.pdf",
                     authors: ["Hugo Kerschot", "Esa Kokkonen", "All consortium partners"],
+                },
+                "EOAP": {
+                    title: "Earth Observation Application Package ",
+                    href: "https://github.com/eoap",
+                    url: "https://github.com/eoap",
+                    authors: ["EOAP"],
                 }
             },
             license: "cc-by",
@@ -61,13 +70,21 @@
             preProcess: [window.respecMermaid.createFigures]
         };
     </script>
+    <script class='remove'>
+        function openIframe() {
+            const url = 'swagger-editor.html';
+            console.log("openIframe", url);
+            window.open(url, "_blank");
+        }
+    </script>
 </head>
 <body>
-<h1 id="title">Simulation model catalog vocabulary</h1>
+<h1 id="title">Simulation model vocabulary and API</h1>
 <section id='abstract'>
     <p>
-        MoCAT is a vocabulary for describing simulation models. This document lists the requirements,
-        defines the schema and provides examples.
+        MoCAT is a vocabulary for describing simulation models and an open API specification for interacting with
+        simulation tools.
+        This document lists the requirements, defines the vocabulary and API and provides an implementation report.
     </p>
     <p>
         A simulation model is a tool to make a digital representation of a real-world phenomenon in nature,
@@ -78,73 +95,130 @@
     <p>
         A common vocabulary for describing simulation models on the Web enhances its discoverability and automation
         potential.
+        A generic API makes it possible to interact with simulation models in a standardized way, which can considerably
+        reduce the effort required for a consumer to interact with a new provider.
     </p>
 </section>
 <section id="requirements" class="informative">
     <h2>Requirements</h2>
 
+    <p>Although generally applicable, our source of requirements for this vocabulary originates from the domain of
+        <strong>spatial planning</strong> and <strong>environmental permit management</strong> in the public sector.
+        In both fields, a wide variety of simulation models are being used to assess the environmental impact of
+        changes on, for example, traffic flows, air quality, water quality, noise, erosion, water levels, or emission of
+        greenhouse gasses.
+        In this context, we look at a <strong>distributed systems</strong>: the systems for running simulation models
+        are separate from the system of environmental permit management or spatial planning.
+        This stems from the variety and complexity of simulation models, making it impractical to embed them in a
+        monolithic system.
+        Another reason is that there are typically multiple service providers (both businesses or public
+        administrations) that provide specific simulation models.
+        The impact assessment can be carried out <i>before</i> an environmental permit is formally requested
+        to pre-assess the impact of the proposed changes (preparatory phase), or <i>after</i> the formal request has
+        been submitted to underpin the decision process (evaluation phase).
+        The simulation runs that are used in the decision-making process must be reproducible this requires that all
+        information regarding input datasets, context, exact model version is persisted and available for inspection.
+        Depending on the context, the impact assessment can be carried out by the public administration, business or
+        citizen.
+    </p>
+
+
+    <figure>
+  <pre class="diagram mermaid">
+---
+config:
+  look: handDrawn
+---
+graph LR
+    Administration([👤 Administration])
+    Business([👤 Business])
+    Citizen([👤 Citizen])
+    EnvPermitSystem{{Environmental Permit System
+      Spatial Planning System}}
+    MER{{"MER Impact Assessment System"}}
+    SimSys1{{Simulation system 1}}
+    SimSys2{{Simulation system 2}}
+    SimSysN{{Simulation system N}}
+
+    Administration --> EnvPermitSystem
+    Business --> EnvPermitSystem
+    Citizen --> EnvPermitSystem
+
+    EnvPermitSystem --> SimSys1
+    EnvPermitSystem --> SimSys2
+    EnvPermitSystem --> SimSysN
+
+  </pre>
+        <figcaption>Use of simulation model services in the public sector.</figcaption>
+    </figure>
+
     <section id="uc-discover"></section>
     <h2>Discover simulation models</h2>
 
-    <p>Users can discover simulation models by searching for and comparing simulation models using various descriptive
-        metadata
-        fields:
+    <p>Users must be able to discover simulation models by searching for and comparing simulation models using various
+        descriptive metadata fields of which title, description, download URL and service endpoint are the most
+        important.
+        Other fields can be keywords, usage constraints, ownership, licensing information,
+        quality assessments [[VOCAB-DQV]], compliance with standards, source code repository URL,
+        release URL, invocation mode (whether results of a simulation run are presented synchronously
+        or asynchronously to a user).
     </p>
-    <ul>
-        <li>title</li>
-        <li>description</li>
-        <li>keywords</li>
-        <li>domain</li>
-        <li>legal constraints</li>
-        <li>usage constraints</li>
-        <li>ownership</li>
-        <li>licensing</li>
-        <li>quality assessments such as those in the [[VOCAB-DQV]]</li>
-        <li>validation reports</li>
-        <li>Compliance with internal or regulatory standards.
-            For example, Departement Omgeving speaks of "MER compliance".
-        </li>
-        <li>source code repository URL</li>
-        <li>releases URL</li>
-        <li>collaboration</li>
-        <li>data services</li>
-        <li>Algorithm</li>
-        <li>Invocation mode: whether results of a simulation run are presented synchronously or asynchronously to a
-            user.
-        </li>
-        <li>Service endpoints: the service endpoints where agents are available to execute a simulation run.</li>
-    </ul>
 
-    <p>A simulation model is the whole of method, algorithm, implemented in software, documentation, etc.
+    <p>A simulation model is the <i>whole</i> of method, algorithm, implemented in software, documentation, etc.
         A simulation model can be used as software or as a service.</p>
+
+    <p>In the domain of environmental impact assessment, simulation models can be catalogued in an (open) data
+        catalogue.
+        The need for enhancing the discoverability of simulation tools stems from the fact that there is an increasing
+        number of providers and consumers.
+    </p>
 
 
     <section id="uc-test-interoperability"></section>
     <h2>Test interoperability of input datasets</h2>
-    <p>Users must be able to assess via automated reasoning which input datasets are compatible with a
-        simulation model based on the data specification.</p>
+
+    <p>A simulation model service may have severa types of input data:
+    <ul>
+        <li>Spatial data: transport networks, spatial features, topological relationships</li>
+        <li>Entity definitions: nodes, machines, people, vehicles</li>
+        <li>Physical properties: noise characteristics, material characteristics, carbon storage parameters, etc.</li>
+        <li>Initial state: starting positions, starting inventory</li>
+        <li>Behavioural characteristics:</li>
+        <li>Scenario data: change of which the impact is assessed: for example, reforestation on CO2 emissions,
+            buffer zones on soil erosion.
+            Particularly, this input is often provided by the consumer of a simulation model.
+        </li>
+    </ul>
+    Users must be able to assess via automated reasoning which input datasets are compatible with a
+    simulation model based on the data specification.</p>
+
+    <p>In the context of spatial planning and environmental permit management, the consumer of a simulation model most
+        often only needs to be concerned with providing the correct scenario data to the simulation model.
+        Each simulation model service has a different way of encoding these scenarios in data.
+
+    </p>
 
     <section id="uc-api"></section>
     <h2>Start a simulation run via a universal interface</h2>
     <p>It must be possible to run simulation models via a universal Application Programming Interface (API).
         The input and output parameters of the API methods are based on a common metamodel.
-        A user can configure and execute a simulation run, inspect the results (output datasets) of previous simulation
-        runs, etc.</p>
-    <p>Metadata represents the algorithm of a simulation model as a number of steps
-        and their execution logic. This makes the internal functioning of a simulation model
-        accessible in a standardized way. Ontologies such as [[P-PLAN]] can be a basis for this.</p>
+        A user can configure and execute a simulation run via a standardized interface.
+        The execution must be asynchronous, allowing for manual interventions (e.g. calibration of input data)
+        prior to executing the model.</p>
 
 
     <section id="uc-reproduce-run"></section>
-    <h2>Make a simulation run reproducible</h2>
+    <h2>Reproduce a simulation run</h2>
     <p>Metadata captures version history, parameter sets, data provenance, and software dependencies so that
         simulation results can be reproduced, audited, or certified, even when original creators are no longer
         involved. [[PROV-O]]</p>
+    <p>In the context of spatial planning and environmental permit management, this use case is important. </p>
 
 </section>
 
 <section id="overview" class="informative">
     <h2>Vocabulary overview</h2>
+    <!--
     <div class="note" role="note" id="note0">
         <div role="heading" class="note-title marker" id="h-note-3" aria-level="4"><span>Requirments first</span></div>
         <aside class="">
@@ -154,6 +228,7 @@
             </p>
         </aside>
     </div>
+    -->
 
 
     <figure>
@@ -194,6 +269,7 @@ classDiagram
         dct:publisher
         dct:issued
         dct:modified
+        dcat:endpointURL
     }
 
     class SimulationRun["SimulationRun
@@ -629,6 +705,25 @@ omg-distribution:osm_tn_geojson
 
 </section>
 
+<section id="oas" class="normative">
+    <h2>Open API specification</h2>
+    <p>
+
+    </p>
+    <div style="position:relative; width:500px; height:500px;">
+        <iframe width="500px" height="500px" src="swagger-editor.html"
+                title="Simulation Model API"></iframe>
+        <div onclick="openIframe()"
+             style="
+            position:absolute;
+            top:0; left:0;
+            width:100%; height:100%;
+            cursor:pointer;
+            background:rgba(0,0,0,0);
+         ">
+        </div>
+    </div>
+</section>
 
 <section id="implementation" class="informative">
     <h1>Implementation report</h1>
@@ -659,7 +754,7 @@ omg-distribution:osm_tn_geojson
 
         <aside class="example" title="SPARQL query">
         <pre>
-PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX prov: &lt,http://www.w3.org/ns/prov#&gt;
 SELECT ?s ?p ?o
 WHERE {?s a prov:Plan.
 ?s ?p ?o}
@@ -673,7 +768,7 @@ config:
   look: handDrawn
   htmlLabels: false
 ---
-flowchart LR
+graph LR
     git[("***git source repo***")]
     build_engine["`***build engine***
       (Jenkins)`"]
@@ -696,13 +791,14 @@ flowchart LR
 
 
     <figure>
-  <pre class="diagram mermaid">---
+  <pre class="diagram mermaid">
+---
 config:
   layout: elk
   look: handDrawn
   htmlLabels: false
 ---
-flowchart LR
+graph LR
     triplestore[("***Triplestore***")]
     lod_endpoint["`***LOD endpoint***
       data.omgeving.vlaanderen.be`"]
@@ -720,6 +816,66 @@ flowchart LR
 
 
     <h3>Start a simulation run via a universal interface</h3>
+
+    We will implement the Simulation Model API to start simulation runs and assess the impact of scenarios of future land
+    use change on emission of greenhouse gasses.
+
+    <figure>
+    <pre class="diagram mermaid">
+---
+config:
+  theme: 'base'
+---
+flowchart LR
+    user([👤 User])
+    system("system")
+
+    subgraph S3["S3 storage (MinIO)"]
+        lucat["Land use categories dataset"]
+        lu["Land use dataset"]
+        param["Parameters dataset"]
+        cr["Carbon reservoir dataset"]
+        dc["Delta carbon dataset"]
+        crt["CRT dataset"]
+        scenarios["Future policy scenario's (WEM, WAM, WOM)"]
+    end
+
+    subgraph k8s["Kubernetes Cluster"]
+        subgraph API["API"]
+            api["Run simulation model "]
+        end
+        subgraph Argo["Argo Workflows"]
+            workflow["Workflow"]
+        end
+        subgraph spark["Spark pod"]
+            driver["Spark Driver"]
+            executor1["Spark Executor 1"]
+            executor2["Spark Executor 2"]
+            executorN["Spark Executor N"]
+        end
+    end
+
+    system --> api
+    user --> workflow
+    api --> driver
+    workflow --> driver
+    lu --> spark
+    param --> spark
+    scenarios --> spark
+    driver --> executor1
+    lucat --> spark
+    driver --> executor2
+    driver --> executorN
+    driver --> dc
+    driver --> cr
+    executor1 --> driver
+    executor2 --> driver
+    executorN --> driver
+    driver --> crt
+
+    </pre>
+        <figcaption>Start a simulation run</figcaption>
+    </figure>
 
 </section>
 
