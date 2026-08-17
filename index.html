@@ -465,6 +465,11 @@ classDiagram
             <td>[[RDF-SCHEMA]]</td>
         </tr>
         <tr>
+            <td><code>sh</code></td>
+            <td><code>http://www.w3.org/ns/shacl#</code></td>
+            <td>[[SHACL]]</td>
+        </tr>
+        <tr>
             <td><code>skos</code></td>
             <td><code>http://www.w3.org/2004/02/skos/core#</code></td>
             <td>[[SKOS-REFERENCE]]</td>
@@ -527,12 +532,28 @@ of network changes) for near-synchronous operation. The TS tool focuses on appli
             <p>The <dfn>input schema</dfn> of a [=simulation model=] is a data specification that describes
                 how an input dataset of a [=simulation run=] is structured. </p>
 
+            <aside class="example" title="input schema">
+  <pre class="ttl">
+
+omg-simulationmodel:traffic-scout
+   mocat:input         omg-schema:TransportNetworkSchema ;
+  </pre>
+            </aside>
+
         </section>
 
         <section data-dfn-for="outputSchema">
             <h4>Property: outputSchema</h4>
             <p>The <dfn>output schema</dfn> of a [=simulation model=] is a data specification that describes
                 how an output dataset of a [=simulation run=] is structured. </p>
+
+            <aside class="example" title="input schema">
+  <pre class="ttl">
+
+omg-simulationmodel:traffic-scout
+   mocat:output         omg-schema:TransportNetworkSchema ;
+  </pre>
+            </aside>
 
         </section>
 
