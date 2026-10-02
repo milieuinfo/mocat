@@ -17,7 +17,6 @@
     <name>MoCat metadata spec - Parent</name>
 
     <modules>
-        <module>owl-validator</module>
         <module>mocat-ontology</module>
         <module>shacl-validator</module>
     </modules>

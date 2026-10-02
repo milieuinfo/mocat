@@ -60,6 +60,8 @@ traffic indicators, geodata, and OpenStreetMap. The TS model supports model calc
 of network changes) for near-synchronous operation. The TS tool focuses on applications at the meso-level
 (municipality, district, neighborhood)."""@en ;
     dcat:keyword        "traffic"@en, "simulation"@en ;
+    dcat:theme          <http://www.eionet.europa.eu/gemet/concept/11087> ;
+    dcat:theme          <http://www.eionet.europa.eu/gemet/concept/7702> ;
     dcterms:publisher   ex:TML ;
     dcterms:issued      "2020-03-15"^^xsd:date ;
     dcterms:modified    "2020-03-15"^^xsd:date ;

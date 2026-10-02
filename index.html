@@ -63,6 +63,12 @@
                     href: "https://github.com/eoap",
                     url: "https://github.com/eoap",
                     authors: ["EOAP"],
+                },
+                "GEMET": {
+                    title: "General Multilingual Environmental Thesaurus (GEMET)",
+                    href: "https://www.eionet.europa.eu/gemet/en/about/",
+                    url: "https://www.eionet.europa.eu/gemet",
+                    authors: ["EEA and Eionet"],
                 }
             },
             license: "cc-by",
@@ -130,23 +136,28 @@ config:
   look: handDrawn
 ---
 graph LR
-    Administration([👤 Administration])
-    Business([👤 Business])
     Citizen([👤 Citizen])
-    EnvPermitSystem{{Environmental Permit System
-      Spatial Planning System}}
-    MER{{"MER Impact Assessment System"}}
+    Business([👤 Business])
+    Administration([👤 Administration])
+    PlaningSystem{{Spatial Planning System}}
+    EnvPermitSystem{{Environmental Permit System}}
     SimSys1{{Simulation system 1}}
     SimSys2{{Simulation system 2}}
     SimSysN{{Simulation system N}}
 
-    Administration --> EnvPermitSystem
     Business --> EnvPermitSystem
     Citizen --> EnvPermitSystem
+    Administration --> EnvPermitSystem
+
+    Administration --> PlaningSystem
 
     EnvPermitSystem --> SimSys1
     EnvPermitSystem --> SimSys2
     EnvPermitSystem --> SimSysN
+
+    PlaningSystem --> SimSys1
+    PlaningSystem --> SimSys2
+    PlaningSystem --> SimSysN
 
   </pre>
         <figcaption>Use of simulation model services in the public sector.</figcaption>
@@ -266,6 +277,7 @@ classDiagram
         dct:title
         dct:description
         dcat:keyword
+        dcat:theme
         dct:publisher
         dct:issued
         dct:modified
@@ -518,36 +530,52 @@ traffic indicators, geodata, and OpenStreetMap. The TS model supports model calc
 of network changes) for near-synchronous operation. The TS tool focuses on applications at the meso-level
 (municipality, district, neighborhood)."""@en ;
     dcat:keyword        "traffic"@en, "simulation"@en ;
+    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
+    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
     dcterms:publisher   ex:TML ;
     dcterms:issued      "2020-03-15"^^xsd:date ;
     dcterms:modified    "2020-03-15"^^xsd:date ;
     mocat:input         omg-schema:TransportNetworkSchema ;
     mocat:output        omg-schema:SimulationOutputSchema .
+
+
+&lt;http://www.eionet.europa.eu/gemet/concept/11087&gt;
+      skos:prefLabel "theory of the environment"@en.
+&lt;http://www.eionet.europa.eu/gemet/concept/7702&gt;
+      skos:prefLabel "simulation"@en.
   </pre>
         </aside>
 
 
-        <section data-dfn-for="inputSchema">
-            <h4>Property: inputSchema</h4>
-            <p>The <dfn>input schema</dfn> of a [=simulation model=] is a data specification that describes
-                how an input dataset of a [=simulation run=] is structured. </p>
+        <section data-dfn-for="keyword">
+            <h4>Property: keyword</h4>
+            <p>A <dfn>keyword</dfn> of a [=simulation model=] is a free-text tag describing the simulation model. </p>
 
-            <aside class="example" title="input schema">
+            <aside class="example" title="keyword">
   <pre class="ttl">
 
 omg-simulationmodel:traffic-scout
-   mocat:input         omg-schema:TransportNetworkSchema ;
+   dcat:keyword         "traffic model".
   </pre>
             </aside>
 
         </section>
+
+        <section data-dfn-for="theme">
+            <h4>Property: theme</h4>
+            <p>A <dfn>theme</dfn> of a [=simulation model=] is a concept from a controlled vocabulary that categorizes the resource.
+                It is recommended to include '<a href="http://www.eionet.europa.eu/gemet/concept/7702">simulation</a>' and
+                '<a href="http://www.eionet.europa.eu/gemet/concept/11087">theory of the environment'</a> concepts from the [[GEMET]].
+            </p>
+        </section>
+
 
         <section data-dfn-for="outputSchema">
             <h4>Property: outputSchema</h4>
             <p>The <dfn>output schema</dfn> of a [=simulation model=] is a data specification that describes
                 how an output dataset of a [=simulation run=] is structured. </p>
 
-            <aside class="example" title="input schema">
+            <aside class="example" title="output schema">
   <pre class="ttl">
 
 omg-simulationmodel:traffic-scout
