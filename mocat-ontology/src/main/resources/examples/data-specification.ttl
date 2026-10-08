@@ -14,35 +14,35 @@ omg-schema:TransportNetworkSchema
     a                  p-plan:Variable ;
     dcterms:title      "Transport Network schema"@en ;
     dcterms:description "A transport network consists of vertices and edges."@en ;
-    sh:node            omg-shacl:TransportVertexShape ;
+    sh:node            omg-shacl:TransportNodeShape ;
     sh:node            omg-shacl:TransportEdgeShape .
 
 # ── NodeShapes (sh:NodeShape) ─────────────────────────────────────────────────
 
-omg-shacl:TransportVertexShape
+omg-shacl:TransportNodeShape
     a              sh:NodeShape ;
-    sh:name        "Transport Vertex"@en ;
-    sh:description "A vertex (node) in the transport network."@en ;
-    sh:targetClass ex:TransportVertex ;
+    sh:name        "Transport node Schema"@en ;
+    sh:description "A node (vertex) in the transport network."@en ;
+    sh:targetClass ex:TransportNode ;
     sh:property    [ sh:path        ex:geom ;
                      sh:name        "geometry"@en ;
-                     sh:description "Point geometry of the vertex."@en ;
+                     sh:description "Point geometry of the node."@en ;
                      sh:datatype    geo:wktLiteral ;
                      sh:minCount    1 ;
                      sh:maxCount    1 ;
-                     sh:message     "A transport vertex must have exactly one (point) geometry." ; ] ;
-    sh:sparql      [ sh:message "Each transport vertex must be connected to at least one transport edge." ;
+                     sh:message     "A transport node must have exactly one (point) geometry." ; ] ;
+    sh:sparql      [ sh:message "Each transport node must be connected to at least one transport edge." ;
                      sh:select  """
             SELECT ?this
             WHERE {
-                FILTER NOT EXISTS { ?edge ex:source ?this . }
+                FILTER NOT EXISTS { ?edge ex:fromNode ?this . }
                 FILTER NOT EXISTS { ?edge ex:target ?this . }
             }
         """ ; ] .
 
 omg-shacl:TransportEdgeShape
     a              sh:NodeShape ;
-    sh:name        "Transport Edge"@en ;
+    sh:name        "Transport Edge Schema"@en ;
     sh:description "An edge (link) in the transport network."@en ;
     sh:targetClass ex:TransportEdge ;
     sh:property    [ sh:path        ex:length ;
@@ -52,20 +52,48 @@ omg-shacl:TransportEdgeShape
                      sh:minCount    1 ;
                      sh:maxCount    1 ;
                      sh:message     "A transport edge must have exactly one length property." ; ] ;
-    sh:property    [ sh:path        ex:source ;
-                     sh:name        "source vertex"@en ;
-                     sh:description "Start vertex of the edge."@en ;
+    sh:property    [ sh:path        ex:fromNode ;
+                     sh:name        "fromNode"@en ;
+                     sh:description "Start node of the edge."@en ;
                      sh:class       ex:TransportNode ;
                      sh:minCount    1 ;
                      sh:maxCount    1 ;
-                     sh:message     "A transport edge must have exactly one source vertex." ; ] ;
-    sh:property    [ sh:path        ex:sink ;
-                     sh:name        "sink vertex"@en ;
-                     sh:description "End vertex of the edge."@en ;
+                     sh:message     "A transport edge must have exactly one fromNode." ; ] ;
+    sh:property    [ sh:path        ex:toNode ;
+                     sh:name        "toNode"@en ;
+                     sh:description "End node of the edge."@en ;
                      sh:class       ex:TransportNode ;
                      sh:minCount    1 ;
                      sh:maxCount    1 ;
-                     sh:message     "A transport edge must have exactly one sink vertex." ; ] ;
+                     sh:message     "A transport edge must have exactly one sink node." ; ] ;
+    sh:property    [ sh:path        ex:legalSpeedLimit ;
+                     sh:name        "speed limit"@en ;
+                     sh:description "Legal speed limit."@en ;
+                     sh:datatype    xsd:double ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A transport edge must have exactly one speed limit property." ; ] ;
+    sh:property    [ sh:path        ex:carAccessible;
+                     sh:name        "carAccessible"@en ;
+                     sh:description "Whether the edge is car accessible."@en ;
+                     sh:datatype    xsd:boolean ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A transport edge must have exactly one carAccessible property." ; ] ;
+    sh:property    [ sh:path        ex:truckAccessible;
+                     sh:name        "truckAccessible"@en ;
+                     sh:description "Whether the edge is truck accessible."@en ;
+                     sh:datatype    xsd:boolean ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A transport edge must have exactly one truckAccessible property." ; ] ;
+    sh:property    [ sh:path        ex:bicycleAccessible;
+                     sh:name        "bicycleAccessible"@en ;
+                     sh:description "Whether the edge is bicycle accessible."@en ;
+                     sh:datatype    xsd:boolean ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A transport edge must have exactly one bicycleAccessible property." ; ] ;
     sh:property    [ sh:path        ex:geom ;
                      sh:name        "geometry"@en ;
                      sh:description "Linestring geometry of the edge."@en ;
@@ -73,3 +101,80 @@ omg-shacl:TransportEdgeShape
                      sh:minCount    1 ;
                      sh:maxCount    1 ;
                      sh:message     "A transport edge must have exactly one (linestring) geometry." ; ] .
+
+
+omg-shacl:TurnMovementShape
+    a              sh:NodeShape ;
+    sh:name        "Turn Movement Schema"@en ;
+    sh:description "An indication that it is possible to make a turn, defined by 3 consecutive transport nodes, in the network."@en ;
+    sh:targetClass ex:TransportEdge ;
+    sh:property    [ sh:path        ex:length ;
+                     sh:name        "length"@en ;
+                     sh:description "Length of the edge in metres."@en ;
+                     sh:datatype    xsd:double ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A transport edge must have exactly one length property." ; ] ;
+    sh:property    [ sh:path        ex:fromNode ;
+                     sh:name        "fromNode"@en ;
+                     sh:description "Start node of the turn movement."@en ;
+                     sh:class       ex:TransportNode ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A turn movement must have exactly one fromNode." ; ] ;
+    sh:property    [ sh:path        ex:viaNode ;
+                     sh:name        "viaNode"@en ;
+                     sh:description "Via node of the edge."@en ;
+                     sh:class       ex:TransportNode ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A turn movement must have exactly one viaNode." ; ] ;
+    sh:property    [ sh:path        ex:toNode ;
+                     sh:name        "toNode"@en ;
+                     sh:description "End node of the edge."@en ;
+                     sh:class       ex:TransportNode ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A turn movement must have exactly one sink node." ; ] ;
+    sh:property    [ sh:path        ex:geom ;
+                     sh:name        "geometry"@en ;
+                     sh:description "Linestring geometry of the edge."@en ;
+                     sh:datatype    geo:wktLiteral ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A transport edge must have exactly one (linestring) geometry." ; ] ;
+    sh:sparql      [ sh:message "The fromNode-viaNode must correspond to an edge in the transport network." ;
+                     sh:select  """
+            SELECT ?fromNode ?viaNode
+            WHERE {
+                FILTER NOT EXISTS { ?edge ex:fromNode ?fromNode .
+                                    ?edge ex:toNode ?viaNode .
+                                    ?edge a ex:TransportEdge .
+                                    ?}
+            }
+        """ ; ]  ;
+    sh:sparql      [ sh:message "The viaNode-toNode must correspond to an edge in the transport network." ;
+                     sh:select  """
+            SELECT ?fromNode ?viaNode
+            WHERE {
+                FILTER NOT EXISTS { ?edge ex:fromNode ?viaNode .
+                                    ?edge ex:toNode ?toNode .
+                                    ?edge a ex:TransportEdge .
+                                    ?}
+            }
+        """ ; ] .
+
+# TODO
+omg-shacl:TransportZoneShape
+    a              sh:NodeShape ;
+    sh:name        "Transport zone"@en ;
+    sh:description "The spatial limits of the transport zone for which the simulation model can produce valid results."@en ;
+    sh:targetClass ex:TransportZone .
+
+# TODO add omg-shacl:RunConfigurationShape with two properties 'ex:key' and 'ex:value'
+
+# TODO add omg-shacl:SimulationOutputShape.
+
+# | Shape | Target class | Key constraints |
+# |-------|-------------|-----------------|
+# | `omg-shacl:SimulationOutputShape` | `ex:TrafficFlowResult` | `ex:transportEdge` (transport edge, 1), `ex:transportMode` (string, 1), `ex:hour` (integer, 1), `ex:flow` (double, 1) |
