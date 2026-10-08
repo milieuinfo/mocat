@@ -16,6 +16,19 @@ basis state is fixed, together with the software version, such that
 identical scenario runs produce identical results. How should the regional model, the
 software version, and their relationship be represented in MOCAT? -->
 
+<!--  DOMG ANSWER: Good question. It depends on the desired use case:
+    1. Findability - we want humans to learn about the Traffic-Scout service offering in general. 
+       Here a general description is enough. This could be part of the simuation model catalogue we want to build.
+
+    2. Service discovery and automation - we want to discover, configure, run simuation models and 
+       download the results via API. In this case, each version matters.
+       The current setup of Traffic-Scout may not scale well if each simuation model is region-specific. 
+       The second use case, would be easier if you have territory-wide input datasets. 
+
+    I think we should aim for the first one, as it is the easiest.
+
+-->
+
 This example documents a single illustrative simulation run for the configured and calibrated
 Traffic Scout model for x-CITE Kortrijk, using MoCAT's three-layer model to capture the plan,
 the execution, and the data artefacts.
@@ -48,7 +61,7 @@ flowchart TD
         R(["`**SimulationRun**
         run-001`"]):::run
         A(["`**Agent** (mocat:Agent)
-        traffic-scout`"]):::agent
+        traffic-scout v2.3`"]):::agent
         R -->|prov:wasAssociatedWith| A
     end
 
@@ -87,6 +100,9 @@ dataset for this scenario input, and link them to the simulation model and run? 
 input contains the requested changes, not a complete replacement transport network. Some
 changes can have an applicable period, but this is not required for every change. -->
 
+<!--  DOMG ANSWER: Yes, that scenario input dataset is the most important one. Could you clarify its schema?
+-->
+
 ---
 
 ## Plan layer
@@ -102,6 +118,8 @@ issued, modified) and declares its expected inputs and outputs via `mocat:input`
 |----------|-------|
 | `dcterms:title` | "Traffic Scout" |
 | `dcterms:publisher` | Transport and Mobility Leuven |
+| `dcterms:issued` | 2020-03-15 |
+| `dcat:version` | "Kortrijk-d9@v2.3.0" |
 | `mocat:input` | `omg-schema:TransportNetworkSchema` |
 | `mocat:input` | `omg-schema:OriginDestinationMatrixSchema` |
 | `mocat:input` | `omg-schema:RunConfigurationSchema` |
@@ -115,7 +133,7 @@ NodeShapes.
 
 | Shape | Target class | Key constraints |
 |-------|-------------|-----------------|
-| `omg-shacl:TransportVertexShape` | `ex:TransportVertex` | `dcterms:identifier` (integer, exactly 1), `ex:geom` (WKT, exactly 1) |
+| `omg-shacl:TransportNodeShape` | `ex:TransportNode` | `dcterms:identifier` (integer, exactly 1), `ex:geom` (WKT, exactly 1) |
 | `omg-shacl:TransportEdgeShape` | `ex:TransportEdge` | `dcterms:identifier` (integer, exactly 1), `ex:length` (double, 1), `ex:fromNode`/`ex:toNode` (vertex, 1), `ex:geom` (WKT, 1), `ex:legalSpeedLimit` (integer, 1), `ex:carAccessible`/`ex:truckAccessible`/`ex:bicycleAccessible` (boolean, 1 each) |
 | `omg-shacl:TurnMovementShape` | `ex:TurnMovement` | `dcterms:identifier` (integer, exactly 1), `ex:fromNode`/`ex:viaNode`/`ex:toNode` (vertex, 1), `ex:carAccessible`/`ex:truckAccessible`/`ex:bicycleAccessible` (boolean, 1 each) |
 | `omg-shacl:TransportZoneShape` | `ex:TransportZone` | `dcterms:identifier` (integer, exactly 1), `ex:geom` (WKT, exactly 1) |
@@ -127,6 +145,9 @@ each correspond to an edge in the same transport network. Could you add checks f
 and for the uniqueness of the vertex, edge, and turn movement identifiers? We have
 intentionally limited the table to structurally important properties and a few
 representative attributes (for now). -->
+
+<!-- DOMG ANSWER: Thank you for the detailed schema specification. I have made changes accordingly.
+-->
 
 ### DataSpecification — `omg-schema:OriginDestinationMatrixSchema`
 
@@ -147,13 +168,16 @@ Describes the simulation hours selected for a run.
 
 | Shape | Target class | Key constraints |
 |-------|-------------|-----------------|
-| `omg-shacl:RunConfigurationShape` | `ex:RunConfiguration` | `ex:simulationHour` (integer, one or more) |
+| `omg-shacl:RunConfigurationShape` | `ex:RunConfiguration` | `ex:key`/`ex:value` (literals) |
 
 <!-- TML COMMENT: A regional Traffic Scout model is configured in advance for a defined
 set of hours and transport modes. A run selects one or more of the supported hours, while
 the transport modes and fixed calibration and assignment parameters remain part of the
 configured model. Is this the appropriate separation in MOCAT? Or would it be better to
 combine this with the scenario intervention input? -->
+
+<!-- DOMG ANSWER: would a generic key-value datastructure be acceptable for you to represent 
+these kinds of run configuration parameters? -->
 
 ### DataSpecification — `omg-schema:SimulationOutputSchema`
 
@@ -170,7 +194,7 @@ transport mode, and simulation hour. -->
 
 ## Execution layer
 
-### Agent — `omg-agent:traffic-scout`
+### Agent — `omg-agent:traffic-scout-v2-3`
 
 Typed as `mocat:Agent` (which implies `prov:SoftwareAgent` and `spdx-sw:Package`).
 The Agent represents the specific Traffic Scout software version used to execute the
@@ -179,6 +203,9 @@ configured regional model. Recording this version supports reproducible simulati
 | Property | Value |
 |----------|-------|
 | `foaf:name` | "Traffic Scout" |
+| `spdx-sw:packageVersion` | "2.3.0" |
+| `spdx-sw:packageUrl` | `pkg:/tml-leuven/traffic-scout@2.3.0` |
+| `spdx-sw:downloadLocation` | Release v2.3.0 |
 | `spdx-sw:primaryPurpose` | `spdx-purpose:application` |
 
 <!-- TML COMMENT: The GitHub package and release references were removed because Traffic
@@ -186,7 +213,13 @@ Scout is not distributed there. MOCAT currently appears to require spdx-sw:packa
 Each regional model is linked internally to a compatible Traffic Scout software version
 for reproducibility. Since this version is an internal operational identifier rather than
 a public software release, is it useful and appropriate to include it in the public
-metadata, or should this property be optional for software that is not publicly distributed? -->
+metadata, or should this property be optional for software that is not publicly distributed?-->
+
+<!-- DOMG: I have removed any reference to Github so we can keep the version indicators.
+Nonetheless, I would agree that this information is optional, yet still relevant 
+to be able to refer to an exact version for reproducibility.
+What matters is the version the Simulation Model (which is the whole of the method, software, and input datasets).
+-->
 
 ### SimulationRun — `omg-simulationrun:run-001`
 
@@ -198,10 +231,10 @@ Links back to the model via `p-plan:correspondsToStep` and to the software agent
 |----------|-------|
 | `p-plan:correspondsToStep` | `omg-simulationmodel:traffic-scout` |
 | `sosa:usedProcedure` | `omg-simulationmodel:traffic-scout` (SOSA compatibility) |
-| `prov:wasAssociatedWith` | `omg-agent:traffic-scout` |
-| `prov:used` | `omg-dataset:xcite-kortrijk-network` (input) |
-| `prov:used` | `omg-dataset:xcite-kortrijk-od-demand` (input) |
-| `prov:used` | `omg-dataset:run-001-configuration` (input) |
+| `prov:wasAssociatedWith` | `omg-agent:traffic-scout-v2-3` |
+| `prov:startedAtTime` | 2026-06-01T00:00:00Z |
+| `prov:endedAtTime` | 2026-06-01T00:12:59Z |
+| `prov:used` | `omg-dataset:ghent-network-2026` (input) |
 | `prov:generated` | `omg-dataset:traffic-scout-output-run-001` (output) |
 
 ---
@@ -220,33 +253,11 @@ The dataset is linked to its specification via both `mocat:conformsToSpecificati
 
 | Property | Value |
 |----------|-------|
+| `dcat:version` | "3.0" |
 | `mocat:conformsToSpecification` | `omg-schema:TransportNetworkSchema` |
 | `p-plan:correspondsToVariable` | `omg-schema:TransportNetworkSchema` |
-
-<!-- TML COMMENT: Traffic Scout does not currently record a content hash for this dataset.
-A SHA-256 hash or similar identifier could be added as future metadata to make the exact
-dataset used for a simulation run easier to identify. -->
-
-### Input dataset — `omg-dataset:xcite-kortrijk-od-demand`
-
-The configured origin-destination demand for the x-CITE Kortrijk model. It is prepared
-during the model configuration and calibration and can be reused by multiple simulation
-runs. It contains traffic demand by origin zone, destination zone, transport mode, and hour,
-and conforms to `omg-schema:OriginDestinationMatrixSchema`.
-
-| Property | Value |
-|----------|-------|
-| `mocat:conformsToSpecification` | `omg-schema:OriginDestinationMatrixSchema` |
-| `p-plan:correspondsToVariable` | `omg-schema:OriginDestinationMatrixSchema` |
-
-### Input dataset — `omg-dataset:run-001-configuration`
-
-The configuration used for this run, containing the selected simulation hours.
-
-| Property | Value |
-|----------|-------|
-| `mocat:conformsToSpecification` | `omg-schema:RunConfigurationSchema` |
-| `p-plan:correspondsToVariable` | `omg-schema:RunConfigurationSchema` |
+| `spdx-core:verifiedUsing` | SHA-256 hash |
+| `dcat:distribution` | GeoJSON download |
 
 ### Output dataset — `omg-dataset:traffic-scout-output-run-001`
 

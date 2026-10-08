@@ -28,7 +28,13 @@ omg-schema:TransportNetworkSchema
     dcterms:title       "Transport Network schema"@en ;
     dcterms:description "A transport network consists of nodes (vertices) and edges."@en ;
     dcterms:hasPart     omg-shacl:TransportNodeShape, omg-shacl:TransportEdgeShape, omg-shacl:TurnMovementShape,
-                        omg-shacl:TransportZoneShape, omg-shacl:OriginDestinationDemandShape .
+                        omg-shacl:TransportZoneShape .
+
+omg-schema:OriginDestinationMatrixSchema
+    a                   p-plan:Variable ;
+    dcterms:title       "Origin destination matrix schema"@en ;
+    dcterms:description "The schema of an origin-destination matrix."@en ;
+    dcterms:hasPart     omg-shacl:OriginDestinationDemandShape .
 
 
 omg-schema:RunConfigurationSchema

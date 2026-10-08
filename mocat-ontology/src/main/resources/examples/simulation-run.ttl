@@ -15,4 +15,4 @@ omg-simulationrun:abc123
     prov:endedAtTime       "2026-06-01T00:12:59Z"^^xsd:dateTime ;
     prov:wasAssociatedWith ex:TSSoftwareAgent ;
     sosa:usedProcedure     omg-simulationmodel:traffic-scout ;
-    prov:used              omg-dataset:osm_tn_dataset .
+    prov:used              omg-dataset:xcite-kortrijk-network .

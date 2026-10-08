@@ -10,14 +10,16 @@
 omg-simulationmodel:traffic-scout
     a                   prov:Plan ;
     dcterms:title       "Traffic Scout"@en ;
-    dcterms:description """Traffic Scout combines an interactive map and a simulation tool to provide insight into local
-traffic flows based on, among other things, local traffic sensors. The technology is based on Telraam data,
-traffic indicators, geodata, and OpenStreetMap. The TS model supports model calculations (including the addition
-of network changes) for near-synchronous operation. The TS tool focuses on applications at the meso-level
-(municipality, district, neighborhood)."""@en ;
+    dcterms:description """Traffic Scout is a simulation model developed by Transport and Mobility Leuven (TML).
+A Traffic Scout model is configured and calibrated for a specific region using
+model-specific data sources and input from the client. It supports scenario calculations
+of multimodal traffic flows at the mesoscopic level."""@en ;
     dcat:keyword        "traffic"@en, "simulation"@en ;
     dcterms:publisher   ex:TML ;
     dcterms:issued      "2020-03-15"^^xsd:date ;
     dcterms:modified    "2020-03-15"^^xsd:date ;
+    dcat:version        "Kortrijk-d9@v2.3.0" ;
     mocat:input         omg-schema:TransportNetworkSchema ;
+    mocat:input         omg-schema:OriginDestinationMatrixSchema ;
+    mocat:input         omg-schema:RunConfigurationSchema ;
     mocat:output        omg-schema:SimulationOutputSchema .

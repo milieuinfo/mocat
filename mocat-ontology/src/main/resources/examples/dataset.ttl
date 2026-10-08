@@ -10,20 +10,21 @@
 @prefix ex:                  <http://example.org/data/> .
 @prefix skos:                <http://www.w3.org/2004/02/skos/core#> .
 
-omg-dataset:osm_tn_dataset
+omg-dataset:xcite-kortrijk-network
     a                            dcat:Dataset ;
-    dcterms:title                "OpenStreetMap transport network"@en ;
+    dcterms:title                "Transport network"@en ;
     dcterms:description          """This dataset contains a routable transport network
 that was derived from OpenStreetMap data."""@en ;
     dcat:keyword                 "transport network"@en, "OpenStreetMap"@en ;
     dcat:theme                   <http://publications.europa.eu/resource/authority/data-theme/TRAN> ;
+    dcat:theme                   <http://www.eionet.europa.eu/gemet/concept/11087> ;
+    dcat:theme                   <http://www.eionet.europa.eu/gemet/concept/7702> ;
     dcterms:publisher            ex:OMG ;
     dcterms:issued               "2024-01-01"^^xsd:date ;
     dcterms:modified             "2026-06-01"^^xsd:date ;
     dcat:distribution            omg-distribution:osm_tn_geojson ;
     dcterms:conformsTo           omg-schema:TransportNetworkSchema ;
     p-plan:correspondsToVariable omg-schema:TransportNetworkSchema ;
-    prov:wasGeneratedBy          omg-simulationrun:abc123 ;
     prov:wasDerivedFrom          omg-dataset:osm_raw_dataset .
 
 omg-distribution:osm_tn_geojson
