@@ -100,7 +100,8 @@ dataset for this scenario input, and link them to the simulation model and run? 
 input contains the requested changes, not a complete replacement transport network. Some
 changes can have an applicable period, but this is not required for every change. -->
 
-<!--  DOMG ANSWER: Yes, that scenario input dataset is the most important one. Could you clarify its schema?
+<!--  DOMG ANSWER: The input dataset describing the actual traffic scenario to be simuated 
+is indeed the most important one. We have added such a schema.
 -->
 
 ---
@@ -123,6 +124,7 @@ issued, modified) and declares its expected inputs and outputs via `mocat:input`
 | `mocat:input` | `omg-schema:TransportNetworkSchema` |
 | `mocat:input` | `omg-schema:OriginDestinationMatrixSchema` |
 | `mocat:input` | `omg-schema:RunConfigurationSchema` |
+| `mocat:input` | `omg-schema:TrafficChangeScenarioSchema`|
 | `mocat:output` | `omg-schema:SimulationOutputSchema` |
 
 ### DataSpecification — `omg-schema:TransportNetworkSchema`

@@ -44,6 +44,14 @@ omg-schema:RunConfigurationSchema
     dcterms:hasPart     omg-shacl:RunConfigurationShape .
 
 
+omg-schema:TrafficChangeScenarioSchema
+    a                   p-plan:Variable ;
+    dcterms:title       "Traffic change scenario schema"@en ;
+    dcterms:description "The schema of a traffic change scenario: a set of create, update and delete operations on the nodes, edges and turn movements of the transport network."@en ;
+    dcterms:hasPart     omg-shacl:TransportNodeChangeShape, omg-shacl:TransportEdgeChangeShape,
+                        omg-shacl:TurnMovementChangeShape .
+
+
 omg-schema:SimulationOutputSchema
     a                   p-plan:Variable ;
     dcterms:title       "Simulation output schema"@en ;
@@ -93,7 +101,7 @@ omg-shacl:TransportEdgeShape
                           sh:name        "fromNode"@en ;
                           sh:description "Start node of the edge."@en ;
                           sh:class       ex:TransportNode ;
-                          sh:nodeKind    sh:IRI ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
                           sh:minCount    1 ;
                           sh:maxCount    1 ;
                           sh:message     "A transport edge must have exactly one fromNode."@en ; ] ;
@@ -350,3 +358,267 @@ omg-shacl:SimulationOutputShape
                           sh:minCount     1 ;
                           sh:maxCount     1 ;
                           sh:message      "A traffic flow result must have exactly one non-negative flow."@en ; ] .
+
+
+# ══ Traffic change scenario ═══════════════════════════════════════════════════
+# A change is a resource (ex:TransportNodeChange, ex:TransportEdgeChange or
+# ex:TurnMovementChange) with an ex:changeOperation of "create", "update" or
+# "delete".
+
+omg-shacl:TransportNodeChangeShape
+    a                   sh:NodeShape ;
+    rdfs:label          "Transport node change Schema"@en ;
+    dcterms:description "A create, update or delete operation on a node (vertex) of the transport network."@en ;
+    sh:targetClass      ex:TransportNodeChange ;
+    sh:property         [ sh:path        ex:changeOperation ;
+                          sh:name        "change operation"@en ;
+                          sh:description "The operation: create, update or delete."@en ;
+                          sh:datatype    xsd:string ;
+                          sh:in          ( "create" "update" "delete" ) ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A change must have exactly one change operation: create, update or delete."@en ; ] ;
+    sh:property         [ sh:path        ex:changedElement ;
+                          sh:name        "changed element"@en ;
+                          sh:description "The existing transport node that is updated or deleted."@en ;
+                          sh:class       ex:TransportNode ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport node change can refer to at most one existing transport node."@en ; ] ;
+    sh:property         [ sh:path        ex:geom ;
+                          sh:name        "geometry"@en ;
+                          sh:description "Point geometry of the node (WKT, optionally prefixed with a CRS IRI)."@en ;
+                          sh:datatype    geo:wktLiteral ;
+                          sh:pattern     "^\\s*(<[^>]+>\\s*)?POINT\\s*(Z|M|ZM)?\\s*\\(" ;
+                          sh:flags       "i" ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport node change can have at most one (point) geometry."@en ; ] ;
+    sh:sparql           omg-shacl:ChangedElementRequiredConstraint ,
+                        omg-shacl:ChangedElementForbiddenOnCreateConstraint ,
+                        omg-shacl:DeleteWithoutPropertiesConstraint ,
+                        omg-shacl:UpdateWithChangeConstraint ;
+    sh:sparql           [ sh:message  "A create operation on a transport node must specify {?missing}."@en ;
+                          sh:prefixes <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+                          sh:select   """
+            SELECT $this ?missing
+            WHERE {
+                $this ex:changeOperation "create" .
+                { BIND(ex:geom AS ?missing) }
+                FILTER NOT EXISTS { $this ?missing ?value . }
+            }
+        """ ; ] .
+
+omg-shacl:TransportEdgeChangeShape
+    a                   sh:NodeShape ;
+    rdfs:label          "Transport edge change Schema"@en ;
+    dcterms:description "A create, update or delete operation on an edge (link) of the transport network."@en ;
+    sh:targetClass      ex:TransportEdgeChange ;
+    sh:property         [ sh:path        ex:changeOperation ;
+                          sh:name        "change operation"@en ;
+                          sh:description "The operation: create, update or delete."@en ;
+                          sh:datatype    xsd:string ;
+                          sh:in          ( "create" "update" "delete" ) ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A change must have exactly one change operation: create, update or delete."@en ; ] ;
+    sh:property         [ sh:path        ex:changedElement ;
+                          sh:name        "changed element"@en ;
+                          sh:description "The existing transport edge that is updated or deleted."@en ;
+                          sh:class       ex:TransportEdge ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can refer to at most one existing transport edge."@en ; ] ;
+    sh:property         [ sh:path         ex:length ;
+                          sh:name         "length"@en ;
+                          sh:description  "Length of the edge in metres."@en ;
+                          sh:datatype     xsd:double ;
+                          sh:minExclusive 0 ;
+                          sh:maxCount     1 ;
+                          sh:message      "A transport edge change can have at most one length property, greater than 0."@en ; ] ;
+    sh:property         [ sh:path        ex:fromNode ;
+                          sh:name        "fromNode"@en ;
+                          sh:description "Start node of the edge: an existing node, or a node created in the same scenario."@en ;
+                          sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can have at most one fromNode, referring to a transport node or a transport node change."@en ; ] ;
+    sh:property         [ sh:path        ex:toNode ;
+                          sh:name        "toNode"@en ;
+                          sh:description "End node of the edge: an existing node, or a node created in the same scenario."@en ;
+                          sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can have at most one toNode, referring to a transport node or a transport node change."@en ; ] ;
+    sh:property         [ sh:path        ex:toNode ;
+                          sh:disjoint    ex:fromNode ;
+                          sh:severity    sh:Warning ;
+                          sh:message     "The toNode of a transport edge change should normally differ from its fromNode (loops are reported as a warning)."@en ; ] ;
+    sh:property         [ sh:path         ex:legalSpeedLimit ;
+                          sh:name         "speed limit"@en ;
+                          sh:description  "Legal speed limit."@en ;
+                          sh:datatype     xsd:double ;
+                          sh:minInclusive 0 ;
+                          sh:maxCount     1 ;
+                          sh:message      "A transport edge change can have at most one speed limit property, not negative."@en ; ] ;
+    sh:property         [ sh:path        ex:carAccessible ;
+                          sh:name        "carAccessible"@en ;
+                          sh:description "Whether the edge is car accessible."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can have at most one carAccessible property."@en ; ] ;
+    sh:property         [ sh:path        ex:truckAccessible ;
+                          sh:name        "truckAccessible"@en ;
+                          sh:description "Whether the edge is truck accessible."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can have at most one truckAccessible property."@en ; ] ;
+    sh:property         [ sh:path        ex:bicycleAccessible ;
+                          sh:name        "bicycleAccessible"@en ;
+                          sh:description "Whether the edge is bicycle accessible."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can have at most one bicycleAccessible property."@en ; ] ;
+    sh:property         [ sh:path        ex:geom ;
+                          sh:name        "geometry"@en ;
+                          sh:description "Linestring geometry of the edge (WKT, optionally prefixed with a CRS IRI)."@en ;
+                          sh:datatype    geo:wktLiteral ;
+                          sh:pattern     "^\\s*(<[^>]+>\\s*)?LINESTRING\\s*(Z|M|ZM)?\\s*\\(" ;
+                          sh:flags       "i" ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge change can have at most one (linestring) geometry."@en ; ] ;
+    sh:sparql           omg-shacl:ChangedElementRequiredConstraint ,
+                        omg-shacl:ChangedElementForbiddenOnCreateConstraint ,
+                        omg-shacl:DeleteWithoutPropertiesConstraint ,
+                        omg-shacl:UpdateWithChangeConstraint ;
+    sh:sparql           [ sh:message  "A create operation on a transport edge must specify {?missing}."@en ;
+                          sh:prefixes <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+                          sh:select   """
+            SELECT $this ?missing
+            WHERE {
+                $this ex:changeOperation "create" .
+                { BIND(ex:length AS ?missing) } UNION { BIND(ex:fromNode AS ?missing) } UNION { BIND(ex:toNode AS ?missing) } UNION { BIND(ex:legalSpeedLimit AS ?missing) } UNION { BIND(ex:carAccessible AS ?missing) } UNION { BIND(ex:truckAccessible AS ?missing) } UNION { BIND(ex:bicycleAccessible AS ?missing) } UNION { BIND(ex:geom AS ?missing) }
+                FILTER NOT EXISTS { $this ?missing ?value . }
+            }
+        """ ; ] .
+
+omg-shacl:TurnMovementChangeShape
+    a                   sh:NodeShape ;
+    rdfs:label          "Turn movement change Schema"@en ;
+    dcterms:description "A create, update or delete operation on a turn movement of the transport network."@en ;
+    sh:targetClass      ex:TurnMovementChange ;
+    sh:property         [ sh:path        ex:changeOperation ;
+                          sh:name        "change operation"@en ;
+                          sh:description "The operation: create, update or delete."@en ;
+                          sh:datatype    xsd:string ;
+                          sh:in          ( "create" "update" "delete" ) ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A change must have exactly one change operation: create, update or delete."@en ; ] ;
+    sh:property         [ sh:path        ex:changedElement ;
+                          sh:name        "changed element"@en ;
+                          sh:description "The existing turn movement that is updated or deleted."@en ;
+                          sh:class       ex:TurnMovement ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can refer to at most one existing turn movement."@en ; ] ;
+    sh:property         [ sh:path        ex:fromNode ;
+                          sh:name        "fromNode"@en ;
+                          sh:description "Start node of the turn movement: an existing node, or a node created in the same scenario."@en ;
+                          sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can have at most one fromNode, referring to a transport node or a transport node change."@en ; ] ;
+    sh:property         [ sh:path        ex:viaNode ;
+                          sh:name        "viaNode"@en ;
+                          sh:description "Node via which the turn movement passes: an existing node, or a node created in the same scenario."@en ;
+                          sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can have at most one viaNode, referring to a transport node or a transport node change."@en ; ] ;
+    sh:property         [ sh:path        ex:toNode ;
+                          sh:name        "toNode"@en ;
+                          sh:description "End node of the turn movement: an existing node, or a node created in the same scenario."@en ;
+                          sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can have at most one toNode, referring to a transport node or a transport node change."@en ; ] ;
+    sh:property         [ sh:path        ex:toNode ;
+                          sh:disjoint    ex:fromNode ;
+                          sh:severity    sh:Warning ;
+                          sh:message     "The toNode of a turn movement change should normally differ from its fromNode (U-turns are reported as a warning)."@en ; ] ;
+    sh:property         [ sh:path        ex:geom ;
+                          sh:name        "geometry"@en ;
+                          sh:description "Linestring geometry of the turn movement (WKT, optionally prefixed with a CRS IRI)."@en ;
+                          sh:datatype    geo:wktLiteral ;
+                          sh:pattern     "^\\s*(<[^>]+>\\s*)?LINESTRING\\s*(Z|M|ZM)?\\s*\\(" ;
+                          sh:flags       "i" ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can have at most one (linestring) geometry."@en ; ] ;
+    sh:sparql           omg-shacl:ChangedElementRequiredConstraint ,
+                        omg-shacl:ChangedElementForbiddenOnCreateConstraint ,
+                        omg-shacl:DeleteWithoutPropertiesConstraint ,
+                        omg-shacl:UpdateWithChangeConstraint ;
+    sh:sparql           [ sh:message  "A create operation on a turn movement must specify {?missing}."@en ;
+                          sh:prefixes <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+                          sh:select   """
+            SELECT $this ?missing
+            WHERE {
+                $this ex:changeOperation "create" .
+                { BIND(ex:fromNode AS ?missing) } UNION { BIND(ex:viaNode AS ?missing) } UNION { BIND(ex:toNode AS ?missing) } UNION { BIND(ex:geom AS ?missing) }
+                FILTER NOT EXISTS { $this ?missing ?value . }
+            }
+        """ ; ] .
+
+
+omg-shacl:ChangedElementRequiredConstraint
+    a            sh:SPARQLConstraint ;
+    sh:message   "An update or delete operation must refer to the existing element it changes with ex:changedElement."@en ;
+    sh:prefixes  <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+    sh:select    """
+            SELECT $this
+            WHERE {
+                $this ex:changeOperation ?operation .
+                FILTER (?operation IN ("update", "delete"))
+                FILTER NOT EXISTS { $this ex:changedElement ?element . }
+            }
+        """ .
+
+omg-shacl:ChangedElementForbiddenOnCreateConstraint
+    a            sh:SPARQLConstraint ;
+    sh:message   "A create operation describes a new element and must not have an ex:changedElement."@en ;
+    sh:prefixes  <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+    sh:select    """
+            SELECT $this ?element
+            WHERE {
+                $this ex:changeOperation "create" ;
+                      ex:changedElement  ?element .
+            }
+        """ .
+
+omg-shacl:DeleteWithoutPropertiesConstraint
+    a            sh:SPARQLConstraint ;
+    sh:message   "A delete operation must not specify other properties (found {?property})."@en ;
+    sh:prefixes  <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+    sh:select    """
+            SELECT $this ?property
+            WHERE {
+                $this ex:changeOperation "delete" ;
+                      ?property ?value .
+                FILTER (?property NOT IN (rdf:type, ex:changeOperation, ex:changedElement))
+            }
+        """ .
+
+omg-shacl:UpdateWithChangeConstraint
+    a            sh:SPARQLConstraint ;
+    sh:message   "An update operation must specify at least one property to change."@en ;
+    sh:prefixes  <https://data.omgeving.vlaanderen.be/id/shacl/> ;
+    sh:select    """
+            SELECT $this
+            WHERE {
+                $this ex:changeOperation "update" .
+                FILTER NOT EXISTS {
+                    $this ?property ?value .
+                    FILTER (?property NOT IN (rdf:type, ex:changeOperation, ex:changedElement))
+                }
+            }
+        """ .
