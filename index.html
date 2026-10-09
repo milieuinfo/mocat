@@ -12,7 +12,7 @@
             edDraftURI: "https://github.com/milieuinfo/mocat/commits/main",
             commitHistoryURL: "https://github.com/milieuinfo/mocat/commits/main",
             logos: [{
-                src: "./img/x-cite-logo.svg",
+                src: "x-cite-logo.svg",
                 alt: "x-CITE",
                 width: 200,
                 height: 48,
@@ -20,25 +20,40 @@
             }],
             editors: [{
                 name: "Tom Van Gulck",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Lieven Raes",
-                url: "http://your-site.com",
+                url: "https://www.vlaanderen.be/digitaal-vlaanderen",
+                company: "Agentschap Digitaal Vlaanderen"
             }, {
                 name: "Veerle Timmermans",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Karen Bosmans",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Geert Van Haute",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Pieter Fannes",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
+            }, {
+                name: "Rodric Frederix  ",
+                url: "https://www.tmleuven.be/en/",
+                company: "Transport & Mobility Leuven"
+            }, {
+                name: "Joren Vanherck",
+                url: "https://www.tmleuven.be/en/",
+                company: "Transport & Mobility Leuven"
             }, {
                 name: "Stijn Goedertier",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }],
             github: {
                 branch: "main",
@@ -276,9 +291,11 @@ classDiagram
       prov:Plan · p-plan:Step"] {
         dct:title
         dct:description
+        dcat:landingPage
         dcat:keyword
         dcat:theme
         dct:publisher
+        dcat:version
         dct:issued
         dct:modified
         dcat:endpointURL
@@ -524,18 +541,23 @@ classDiagram
 omg-simulationmodel:traffic-scout
     a                   prov:Plan ;
     dcterms:title       "Traffic Scout"@en ;
-    dcterms:description """Traffic Scout combines an interactive map and a simulation tool to provide insight into local
-traffic flows based on, among other things, local traffic sensors. The technology is based on Telraam data,
-traffic indicators, geodata, and OpenStreetMap. The TS model supports model calculations (including the addition
-of network changes) for near-synchronous operation. The TS tool focuses on applications at the meso-level
-(municipality, district, neighborhood)."""@en ;
+    dcterms:description """Traffic Scout is a simulation model developed by Transport and Mobility Leuven (TML).
+A Traffic Scout model is configured and calibrated for a specific region using
+model-specific data sources and input from the client. It supports scenario calculations
+of multimodal traffic flows at the mesoscopic level."""@en ;
+    dcat:landingPage    &lt;https://www.tmleuven.be/en/navigation/Traffic-Scout&gt; ;
     dcat:keyword        "traffic"@en, "simulation"@en ;
-    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
-    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
     dcterms:publisher   ex:TML ;
+    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
+    dcat:theme          &lt;//www.eionet.europa.eu/gemet/concept/7702&gt; ;
+    dcterms:publisher   ex:TML ;
+    dcat:version        "Kortrijk-d3.1@v2.3.0" ;
     dcterms:issued      "2020-03-15"^^xsd:date ;
     dcterms:modified    "2020-03-15"^^xsd:date ;
     mocat:input         omg-schema:TransportNetworkSchema ;
+    mocat:input         omg-schema:OriginDestinationMatrixSchema ;
+    mocat:input         omg-schema:RunConfigurationSchema ;
+    mocat:input         omg-schema:TrafficChangeScenarioSchema ;
     mocat:output        omg-schema:SimulationOutputSchema .
 
 
@@ -549,40 +571,30 @@ of network changes) for near-synchronous operation. The TS tool focuses on appli
 
         <section data-dfn-for="keyword">
             <h4>Property: keyword</h4>
-            <p>A <dfn>keyword</dfn> of a [=simulation model=] is a free-text tag describing the simulation model. </p>
+            <p>A <dfn>keyword</dfn> for a [=simulation model=] is a free-text tag describing the simulation model. </p>
 
-            <aside class="example" title="keyword">
-  <pre class="ttl">
-
-omg-simulationmodel:traffic-scout
-   dcat:keyword         "traffic model".
-  </pre>
-            </aside>
 
         </section>
 
         <section data-dfn-for="theme">
             <h4>Property: theme</h4>
-            <p>A <dfn>theme</dfn> of a [=simulation model=] is a concept from a controlled vocabulary that categorizes the resource.
+            <p>A <dfn>theme</dfn> for a [=simulation model=] is a concept from a controlled vocabulary that categorizes the resource.
                 It is recommended to include '<a href="http://www.eionet.europa.eu/gemet/concept/7702">simulation</a>' and
                 '<a href="http://www.eionet.europa.eu/gemet/concept/11087">theory of the environment'</a> concepts from the [[GEMET]].
             </p>
         </section>
 
+        <section data-dfn-for="input">
+            <h4>Property: input</h4>
+            <p>The <dfn>input schema</dfn> of a [=simulation model=] is a data specification that describes
+                how input datasets of a [=simulation run=] must be structured. </p>
+        </section>
 
-        <section data-dfn-for="outputSchema">
-            <h4>Property: outputSchema</h4>
+
+        <section data-dfn-for="output">
+            <h4>Property: output</h4>
             <p>The <dfn>output schema</dfn> of a [=simulation model=] is a data specification that describes
                 how an output dataset of a [=simulation run=] is structured. </p>
-
-            <aside class="example" title="output schema">
-  <pre class="ttl">
-
-omg-simulationmodel:traffic-scout
-   mocat:output         omg-schema:TransportNetworkSchema ;
-  </pre>
-            </aside>
-
         </section>
 
 
@@ -603,53 +615,106 @@ omg-simulationmodel:traffic-scout
         <aside class="example" title="Data specification using SHACL">
   <pre class="ttl">
 omg-schema:TransportNetworkSchema
-    a              p-plan:Variable ;
-    rdf:type       &lt;http://purl.org/adms/assettype/Schema&gt; ;
-    rdfs:label     "Transport Network schema"@en ;
-    sh:description """A transport network consists of vertices and edges.""" ;
-    sh:node        omg-shacl:TransportVertexShape ;
-    sh:node        omg-shacl:TransportEdgeShape .
+    a                   p-plan:Variable ;
+    dcterms:title       "Transport Network schema"@en ;
+    dcterms:description "A transport network consists of nodes (vertices) and edges."@en ;
+    dcterms:hasPart     omg-shacl:TransportNodeShape, omg-shacl:TransportEdgeShape, omg-shacl:TurnMovementShape,
+                        omg-shacl:TransportZoneShape .
 
-omg-shacl:TransportVertexShape
-    a              sh:NodeShape ;
-    sh:targetClass ex:TransportVertex ;
-    sh:property    [ sh:path     ex:geom ;
-                     sh:datatype geo:wktLiteral ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport vertex must have exactly one (point) geometry (geom)." ; ] ;
-    sh:sparql      [ sh:message "Each transport vertex must be connected to at least one transport Edge." ;
-                     sh:select  """
-            SELECT ?this
+omg-shacl:TransportNodeShape
+    a                   sh:NodeShape ;
+    rdfs:label          "Transport node Schema"@en ;
+    dcterms:description "A node (vertex) in the transport network."@en ;
+    sh:targetClass      ex:TransportNode ;
+    sh:property         [ sh:path        ex:geom ;
+                          sh:name        "geometry"@en ;
+                          sh:description "Point geometry of the node (WKT, optionally prefixed with a CRS IRI)."@en ;
+                          sh:datatype    geo:wktLiteral ;
+                          sh:pattern     "^\\s*(<[^>]+>\\s*)?POINT\\s*(Z|M|ZM)?\\s*\\(" ;
+                          sh:flags       "i" ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport node must have exactly one (point) geometry."@en ; ] ;
+    sh:sparql           [ sh:message  "Each transport node must be connected to at least one transport edge."@en ;
+                          sh:prefixes &lt;https://data.omgeving.vlaanderen.be/id/shacl/&gt; ;
+                          sh:select   """
+            SELECT $this
             WHERE {
-                FILTER NOT EXISTS { ?edge ex:source ?this . }
-                FILTER NOT EXISTS { ?edge ex:target ?this . }
+                FILTER NOT EXISTS { ?edge ex:fromNode $this . }
+                FILTER NOT EXISTS { ?edge ex:toNode $this . }
             }
         """ ; ] .
 
 omg-shacl:TransportEdgeShape
-    a              sh:NodeShape ;
-    sh:targetClass ex:TransportEdge ;
-    sh:property    [ sh:path     ex:length ;
-                     sh:datatype xsd:double ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one length property." ; ] ;
-    sh:property    [ sh:path     ex:source ;
-                     sh:class    ex:TransportNode ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one source vertex." ; ] ;
-    sh:property    [ sh:path     ex:sink ;
-                     sh:class    ex:TransportNode ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one sink vertex." ; ] ;
-    sh:property    [ sh:path     ex:geom ;
-                     sh:datatype geo:wktLiteral ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one (linestring) geometry (geom)." ; ] .
+    a                   sh:NodeShape ;
+    rdfs:label          "Transport Edge Schema"@en ;
+    dcterms:description "An edge (link) in the transport network."@en ;
+    sh:targetClass      ex:TransportEdge ;
+    sh:property         [ sh:path         ex:length ;
+                          sh:name         "length"@en ;
+                          sh:description  "Length of the edge in metres."@en ;
+                          sh:datatype     xsd:double ;
+                          sh:minExclusive 0 ;
+                          sh:minCount     1 ;
+                          sh:maxCount     1 ;
+                          sh:message      "A transport edge must have exactly one length property, greater than 0."@en ; ] ;
+    sh:property         [ sh:path        ex:fromNode ;
+                          sh:name        "fromNode"@en ;
+                          sh:description "Start node of the edge."@en ;
+                          sh:class       ex:TransportNode ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one fromNode."@en ; ] ;
+    sh:property         [ sh:path        ex:toNode ;
+                          sh:name        "toNode"@en ;
+                          sh:description "End node of the edge."@en ;
+                          sh:class       ex:TransportNode ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:disjoint    ex:fromNode ;
+                          sh:severity    sh:Warning ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one toNode, normally different from its fromNode (loops are reported as a warning)."@en ; ] ;
+    sh:property         [ sh:path         ex:legalSpeedLimit ;
+                          sh:name         "speed limit"@en ;
+                          sh:description  "Legal speed limit."@en ;
+                          sh:datatype     xsd:double ;
+                          sh:minInclusive 0 ;
+                          sh:minCount     1 ;
+                          sh:maxCount     1 ;
+                          sh:message      "A transport edge must have exactly one speed limit property, not negative."@en ; ] ;
+    sh:property         [ sh:path        ex:carAccessible ;
+                          sh:name        "carAccessible"@en ;
+                          sh:description "Whether the edge is car accessible."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one carAccessible property."@en ; ] ;
+    sh:property         [ sh:path        ex:truckAccessible ;
+                          sh:name        "truckAccessible"@en ;
+                          sh:description "Whether the edge is truck accessible."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one truckAccessible property."@en ; ] ;
+    sh:property         [ sh:path        ex:bicycleAccessible ;
+                          sh:name        "bicycleAccessible"@en ;
+                          sh:description "Whether the edge is bicycle accessible."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one bicycleAccessible property."@en ; ] ;
+    sh:property         [ sh:path        ex:geom ;
+                          sh:name        "geometry"@en ;
+                          sh:description "Linestring geometry of the edge (WKT, optionally prefixed with a CRS IRI)."@en ;
+                          sh:datatype    geo:wktLiteral ;
+                          sh:pattern     "^\\s*(<[^>]+>\\s*)?LINESTRING\\s*(Z|M|ZM)?\\s*\\(" ;
+                          sh:flags       "i" ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one (linestring) geometry."@en ; ] .
+
   </pre>
         </aside>
 
@@ -673,16 +738,17 @@ omg-shacl:TransportEdgeShape
 
         <aside class="example" title="Simulation run">
             <pre>
-omg-simulationrun:abc123
+omg-simulationrun:run-001
     a                      prov:Activity ;
-    dcterms:title          "Simulation Run abc123"@en ;
-    dcterms:description    "Traffic Scout simulation run over the Ghent transport network."@en ;
+    dcterms:title            "Traffic Scout run 001 — Kortrijk 2026-06-01"@en ;
+    dcterms:description    "Traffic Scout simulation run over the Kortrijk transport network."@en ;
+    p-plan:correspondsToStep omg-simulationmodel:traffic-scout ;
+    sosa:usedProcedure       omg-simulationmodel:traffic-scout ;
+    prov:wasAssociatedWith   omg-agent:traffic-scout-v2-3 ;
     prov:startedAtTime     "2026-06-01T00:00:00Z"^^xsd:dateTime ;
     prov:endedAtTime       "2026-06-01T00:12:59Z"^^xsd:dateTime ;
-    prov:wasAssociatedWith ex:TSSoftwareAgent ;
-    sosa:usedProcedure     omg-simulationmodel:traffic-scout ;
-    prov:used              omg-dataset:osm_tn_dataset .
-
+    prov:used              omg-dataset:xcite-kortrijk-network ;
+    prov:generated           omg-dataset:traffic-scout-output-run-001 .
             </pre>
         </aside>
 
@@ -705,33 +771,34 @@ omg-simulationrun:abc123
     </section>
     <section data-dfn-for="Dataset">
         <h3>Class: Dataset (dcat:Dataset)</h3>
-        <p>A <dfn>dataset</dfn> is defined in [[DCAT]] as a collection of data, published or curated by a single agent,
+        <p>A <dfn>dataset</dfn> is defined in [[VOCAB-DCAT]] as a collection of data, published or curated by a single agent,
             and available for access or download in one or more representations.</p>
 
         <aside class="example" title="Input dataset">
         <pre>
-omg-dataset:osm_tn_dataset
+omg-dataset:xcite-kortrijk-network
     a                            dcat:Dataset ;
-    dcterms:title                "OpenStreetMap transport network"@en ;
+    dcterms:title                "xCite Kortrijk Transport network"@en ;
     dcterms:description          """This dataset contains a routable transport network
 that was derived from OpenStreetMap data."""@en ;
     dcat:keyword                 "transport network"@en, "OpenStreetMap"@en ;
-    dcat:theme                   &gt;http://publications.europa.eu/resource/authority/data-theme/TRAN&lt; ;
+    dcat:theme                   &lt;http://publications.europa.eu/resource/authority/data-theme/TRAN&gt; ;
+    dcat:theme                   &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
+    dcat:theme                   &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
     dcterms:publisher            ex:OMG ;
     dcterms:issued               "2024-01-01"^^xsd:date ;
     dcterms:modified             "2026-06-01"^^xsd:date ;
-    dcat:distribution            omg-distribution:osm_tn_geojson ;
+    dcat:distribution            omg-distribution:xcite-kortrijk-network-geojson ;
     dcterms:conformsTo           omg-schema:TransportNetworkSchema ;
     p-plan:correspondsToVariable omg-schema:TransportNetworkSchema ;
-    prov:wasGeneratedBy          omg-simulationrun:abc123 ;
     prov:wasDerivedFrom          omg-dataset:osm_raw_dataset .
 
-omg-distribution:osm_tn_geojson
+omg-distribution:xcite-kortrijk-network-geojson
     a                dcat:Distribution ;
-    dcterms:title    "OSM transport network GeoJSON"@en ;
-    dcterms:format   &gt;http://publications.europa.eu/resource/authority/file-type/GEOJSON&lt; ;
-    dcat:accessURL   &gt;https://data.omgeving.vlaanderen.be/id/dataset/osm_tn_dataset&lt; ;
-    dcat:downloadURL &gt;https://data.omgeving.vlaanderen.be/files/osm_tn_dataset.geojson&lt; .
+    dcterms:title    "xCite Kortrijk Transport network - GeoJSON"@en ;
+    dcterms:format   &lt;http://publications.europa.eu/resource/authority/file-type/GEOJSON&gt; ;
+    dcat:accessURL   &lt;https://data.omgeving.vlaanderen.be/id/dataset/xcite-kortrijk-network&gt; ;
+    dcat:downloadURL &lt;https://data.omgeving.vlaanderen.be/files/xcite-kortrijk-network.geojson&gt; .
 
         </pre>
         </aside>

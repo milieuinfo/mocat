@@ -68,7 +68,7 @@ public class ExamplesValidationTest {
 
     @Test
     void simulationModelContainsProvPlan() throws URISyntaxException {
-        Model model = RdfUtils.parseTurtle(classpathFile("examples/simulation-model.ttl"));
+        Model model = RdfUtils.parseTurtle(classpathFile("examples/Traffic-Scout-end-to-end-scenario.ttl"));
         assertTrue(
                 model.listSubjectsWithProperty(RDF.type,
                         model.createResource("http://www.w3.org/ns/prov#Plan")).hasNext(),
@@ -77,7 +77,7 @@ public class ExamplesValidationTest {
 
     @Test
     void dataSpecificationContainsShaclNodeShape() throws URISyntaxException {
-        Model model = RdfUtils.parseTurtle(classpathFile("examples/data-specification.ttl"));
+        Model model = RdfUtils.parseTurtle(classpathFile("examples/Traffic-Scout-end-to-end-scenario.ttl"));
         assertTrue(
                 model.listSubjectsWithProperty(RDF.type,
                         model.createResource("http://www.w3.org/ns/shacl#NodeShape")).hasNext(),
@@ -86,7 +86,7 @@ public class ExamplesValidationTest {
 
     @Test
     void simulationRunContainsProvActivity() throws URISyntaxException {
-        Model model = RdfUtils.parseTurtle(classpathFile("examples/simulation-run.ttl"));
+        Model model = RdfUtils.parseTurtle(classpathFile("examples/Traffic-Scout-end-to-end-scenario.ttl"));
         assertTrue(
                 model.listSubjectsWithProperty(RDF.type,
                         model.createResource("http://www.w3.org/ns/prov#Activity")).hasNext(),
@@ -95,7 +95,7 @@ public class ExamplesValidationTest {
 
     @Test
     void datasetContainsDcatDataset() throws URISyntaxException {
-        Model model = RdfUtils.parseTurtle(classpathFile("examples/dataset.ttl"));
+        Model model = RdfUtils.parseTurtle(classpathFile("examples/Traffic-Scout-end-to-end-scenario.ttl"));
         assertTrue(
                 model.listSubjectsWithProperty(RDF.type,
                         model.createResource("http://www.w3.org/ns/dcat#Dataset")).hasNext(),
