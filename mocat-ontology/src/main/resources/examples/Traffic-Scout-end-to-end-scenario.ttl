@@ -61,9 +61,7 @@ omg-simulationmodel:traffic-scout
     a                   prov:Plan ;
     dcterms:title       "Traffic Scout"@en ;
     dcterms:description """Traffic Scout is a simulation model developed by Transport and Mobility Leuven (TML).
-A Traffic Scout model is configured and calibrated for a specific region using
-model-specific data sources and input from the client. It supports scenario calculations
-of multimodal traffic flows at the mesoscopic level."""@en ;
+A Traffic Scout model is configured and calibrated for a specific region using model-specific data sources and input from the client. It supports scenario calculations of multimodal traffic flows at the mesoscopic level."""@en ;
     dcat:landingPage    <https://www.tmleuven.be/en/navigation/Traffic-Scout> ;
     dcat:keyword        "traffic"@en, "simulation"@en ;
     dcterms:publisher   ex:TML ;
