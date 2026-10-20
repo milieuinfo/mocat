@@ -37,7 +37,7 @@
 
 ex:TML
     a         foaf:Organization, prov:Agent ;
-    foaf:name "Transport and Mobility Leuven"@en .
+    foaf:name "Transport & Mobility Leuven"@en .
 
 ex:OMG
     a         foaf:Organization, prov:Agent ;
@@ -51,7 +51,7 @@ omg-catalog:OpenDataCatalogue
     dcterms:title     "Catalogue of Simulation Models"@en ;
     dcterms:publisher ex:OMG ;
     mocat:model       omg-simulationmodel:traffic-scout ;
-    dcat:dataset      omg-dataset:ghent-network-2026 ;
+    dcat:dataset      omg-dataset:xcite-kortrijk-network ;
     dcat:dataset      omg-dataset:traffic-scout-output-run-001 .
 
 
@@ -60,17 +60,16 @@ omg-catalog:OpenDataCatalogue
 omg-simulationmodel:traffic-scout
     a                   prov:Plan ;
     dcterms:title       "Traffic Scout"@en ;
-    dcterms:description """Traffic Scout is a simulation model developed by Transport and Mobility Leuven (TML).
-A Traffic Scout model is configured and calibrated for a specific region using model-specific data sources and input from the client. It supports scenario calculations of multimodal traffic flows at the mesoscopic level."""@en ;
+    dcterms:description """Traffic Scout is a traffic simulation model developed by Transport & Mobility Leuven (TML).
+It supports scenario calculations of multimodal traffic flows (car, truck, bicycle) at the mesoscopic level and allows to perform selected link analysis (SLA) as post-processing.
+Traffic Scout is particularly optimized for simulating local traffic flows at the city, municipality, and neighbourhood levels. It supports interactive scenario analysis, allowing users to modify traffic conditions and rapidly evaluate their effects on traffic flows.
+A Traffic Scout model is configured and calibrated for a specific region using model-specific data sources and input from the client, including origin-destination matrices, cross-section and intersection counts, traffic light control schemes and OpenStreetMap."""@en ;
     dcat:landingPage    <https://www.tmleuven.be/en/navigation/Traffic-Scout> ;
-    dcat:keyword        "traffic"@en, "simulation"@en ;
+    dcat:landingPage    <https://traffic-scout.net/> ;
+    dcat:keyword        "traffic"@en, "simulation"@en, "transport planning"@en, "traffic assignment"@en;
     dcterms:publisher   ex:TML ;
     dcat:theme          <http://www.eionet.europa.eu/gemet/concept/11087> ;
     dcat:theme          <http://www.eionet.europa.eu/gemet/concept/7702> ;
-    dcterms:publisher   ex:TML ;
-    dcat:version        "Kortrijk-d3.1@v2.3.0" ;
-    dcterms:issued      "2020-03-15"^^xsd:date ;
-    dcterms:modified    "2020-03-15"^^xsd:date ;
     mocat:input         omg-schema:TransportNetworkSchema ;
     mocat:input         omg-schema:OriginDestinationMatrixSchema ;
     mocat:input         omg-schema:RunConfigurationSchema ;
@@ -107,7 +106,7 @@ A Traffic Scout model is configured and calibrated for a specific region using m
 omg-schema:TransportNetworkSchema
     a                   p-plan:Variable ;
     dcterms:title       "Transport Network schema"@en ;
-    dcterms:description "A transport network consists of nodes (vertices) and edges."@en ;
+    dcterms:description "A transport network consists of nodes (vertices), edges, turn movements and zones."@en ;
     dcterms:hasPart     omg-shacl:TransportNodeShape, omg-shacl:TransportEdgeShape, omg-shacl:TurnMovementShape,
                         omg-shacl:TransportZoneShape .
 
@@ -136,11 +135,11 @@ omg-schema:TrafficChangeScenarioSchema
 omg-schema:SimulationOutputSchema
     a                   p-plan:Variable ;
     dcterms:title       "Simulation output schema"@en ;
-    dcterms:description "The schema of the output dataset produced by the Traffic-Scout simulation model."@en ;
+    dcterms:description "The schema of the output dataset produced by the Traffic Scout simulation model."@en ;
     dcterms:hasPart     omg-shacl:SimulationOutputShape .
 
 # ── NodeShapes (sh:NodeShape) ─────────────────────────────────────────────────
-
+# <!-- TML COMMENT: The restriction that each transport node needs to be connected to at least one edge is not needed -->
 omg-shacl:TransportNodeShape
     a                   sh:NodeShape ;
     rdfs:label          "Transport node Schema"@en ;
@@ -198,7 +197,7 @@ omg-shacl:TransportEdgeShape
                           sh:message     "A transport edge must have exactly one toNode, normally different from its fromNode (loops are reported as a warning)."@en ; ] ;
     sh:property         [ sh:path         ex:legalSpeedLimit ;
                           sh:name         "speed limit"@en ;
-                          sh:description  "Legal speed limit."@en ;
+                          sh:description  "Legal speed limit in km/h."@en ;
                           sh:datatype     xsd:double ;
                           sh:minInclusive 0 ;
                           sh:minCount     1 ;
@@ -239,7 +238,7 @@ omg-shacl:TurnMovementShape
     a              sh:NodeShape ;
     rdfs:label     "Turn Movement Schema"@en ;
     dcterms:description
-                   "An indication that it is possible to make a turn, defined by 3 consecutive transport nodes, in the network."@en ;
+                   "Any pair of successive directed transport edges, defined by three consecutive transport nodes: fromNode, viaNode and toNode. Its accessibility indicates whether the movement is permitted for each transport mode."@en ;
     sh:targetClass ex:TurnMovement ;
     sh:property    [ sh:path        ex:fromNode ;
                      sh:name        "fromNode"@en ;
@@ -267,16 +266,27 @@ omg-shacl:TurnMovementShape
                      sh:minCount    1 ;
                      sh:maxCount    1 ;
                      sh:message     "A turn movement must have exactly one toNode; a toNode equal to the fromNode is a U-turn (reported as a warning)."@en ; ] ;
-    sh:property    [ sh:path     ex:geom ;
-                     sh:name     "geometry"@en ;
-                     sh:description
-                                 "Linestring geometry of the turn movement (WKT, optionally prefixed with a CRS IRI)."@en ;
-                     sh:datatype geo:wktLiteral ;
-                     sh:pattern  "^\\s*(<[^>]+>\\s*)?LINESTRING\\s*(Z|M|ZM)?\\s*\\(" ;
-                     sh:flags    "i" ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A turn movement must have exactly one (linestring) geometry."@en ; ] ;
+    sh:property    [ sh:path        ex:carAccessible ;
+                     sh:name        "car accessible"@en ;
+                     sh:description "Whether the turn movement is permitted for cars."@en ;
+                     sh:datatype    xsd:boolean ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A turn movement must have exactly one boolean carAccessible."@en ; ] ;
+    sh:property    [ sh:path        ex:truckAccessible ;
+                     sh:name        "truck accessible"@en ;
+                     sh:description "Whether the turn movement is permitted for trucks."@en ;
+                     sh:datatype    xsd:boolean ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A turn movement must have exactly one boolean truckAccessible."@en ; ] ;
+    sh:property    [ sh:path        ex:bicycleAccessible ;
+                     sh:name        "bicycle accessible"@en ;
+                     sh:description "Whether the turn movement is permitted for bicycles."@en ;
+                     sh:datatype    xsd:boolean ;
+                     sh:minCount    1 ;
+                     sh:maxCount    1 ;
+                     sh:message     "A turn movement must have exactly one boolean bicycleAccessible."@en ; ] ;
     sh:sparql      [ sh:message  "The fromNode-viaNode must correspond to an edge in the transport network."@en ;
                      sh:prefixes <https://data.omgeving.vlaanderen.be/id/shacl/> ;
                      sh:select   """
@@ -306,18 +316,18 @@ omg-shacl:TransportZoneShape
     a              sh:NodeShape ;
     rdfs:label     "Transport zone"@en ;
     dcterms:description
-                   "The spatial limits of the transport zone for which the simulation model can produce valid results."@en ;
+                   "An area or virtual point location used as an origin or destination in travel demand data."@en ;
     sh:targetClass ex:TransportZone ;
     sh:property    [ sh:path     ex:geom ;
                      sh:name     "geometry"@en ;
                      sh:description
-                                 "Polygon geometry of the transport zone (WKT, optionally prefixed with a CRS IRI)."@en ;
+                                 "Polygon geometry of the transport zone, or point geometry for a virtual zone (WKT, optionally prefixed with a CRS IRI)."@en ;
                      sh:datatype geo:wktLiteral ;
-                     sh:pattern  "^\\s*(<[^>]+>\\s*)?(MULTI)?POLYGON\\s*(Z|M|ZM)?\\s*\\(" ;
+                     sh:pattern  "^\\s*(<[^>]+>\\s*)?((MULTI)?POLYGON|POINT)\\s*(Z|M|ZM)?\\s*\\(" ;
                      sh:flags    "i" ;
                      sh:minCount 1 ;
                      sh:maxCount 1 ;
-                     sh:message  "A transport zone must have exactly one (polygon) geometry."@en ; ] .
+                     sh:message  "A transport zone must have exactly one (polygon or point) geometry."@en ; ] .
 
 
 omg-shacl:OriginDestinationDemandShape
@@ -438,7 +448,7 @@ omg-shacl:SimulationOutputShape
                           sh:minInclusive 0 ;
                           sh:minCount     1 ;
                           sh:maxCount     1 ;
-                          sh:message      "A traffic flow result must have exactly one non-negative flow."@en ; ] .
+                          sh:message      "A traffic flow result must have exactly one non-negative flow. It represents the number of moving units of the given transport mode during the given hour."@en ; ] .
 
 
 # ══ Traffic change scenario ═══════════════════════════════════════════════════
@@ -582,31 +592,26 @@ omg-shacl:TransportEdgeChangeShape
             }
         """ ; ] .
 
+# <!-- TML COMMENT: This one was changed a lot. Please check + correct, especially the sparql constraints -->
 omg-shacl:TurnMovementChangeShape
     a                   sh:NodeShape ;
     rdfs:label          "Turn movement change Schema"@en ;
-    dcterms:description "A create, update or delete operation on a turn movement of the transport network."@en ;
+    dcterms:description "An update of the accessibility of a turn movement. Turn movements are implied by every three consecutive nodes of the network, so they cannot be created or deleted; they are identified by their fromNode, viaNode and toNode."@en ;
     sh:targetClass      ex:TurnMovementChange ;
     sh:property         [ sh:path        ex:changeOperation ;
                           sh:name        "change operation"@en ;
-                          sh:description "The operation: create, update or delete."@en ;
+                          sh:description "Always update: turn movements cannot be created or deleted."@en ;
                           sh:datatype    xsd:string ;
-                          sh:in          ( "create" "update" "delete" ) ;
+                          sh:in          ("update") ;
                           sh:minCount    1 ;
                           sh:maxCount    1 ;
-                          sh:message     "A change must have exactly one change operation: create, update or delete."@en ; ] ;
-    sh:property         [ sh:path        ex:changedElement ;
-                          sh:name        "changed element"@en ;
-                          sh:description "The existing turn movement that is updated or deleted."@en ;
-                          sh:class       ex:TurnMovement ;
-                          sh:nodeKind    sh:BlankNodeOrIRI ;
-                          sh:maxCount    1 ;
-                          sh:message     "A turn movement change can refer to at most one existing turn movement."@en ; ] ;
+                          sh:message     "A turn movement change must have exactly one change operation, which must be update."@en ; ] ;
     sh:property         [ sh:path        ex:fromNode ;
                           sh:name        "fromNode"@en ;
                           sh:description "Start node of the turn movement: an existing node, or a node created in the same scenario."@en ;
                           sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
                           sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:minCount    1 ;
                           sh:maxCount    1 ;
                           sh:message     "A turn movement change can have at most one fromNode, referring to a transport node or a transport node change."@en ; ] ;
     sh:property         [ sh:path        ex:viaNode ;
@@ -614,6 +619,7 @@ omg-shacl:TurnMovementChangeShape
                           sh:description "Node via which the turn movement passes: an existing node, or a node created in the same scenario."@en ;
                           sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
                           sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:minCount    1 ;
                           sh:maxCount    1 ;
                           sh:message     "A turn movement change can have at most one viaNode, referring to a transport node or a transport node change."@en ; ] ;
     sh:property         [ sh:path        ex:toNode ;
@@ -621,20 +627,35 @@ omg-shacl:TurnMovementChangeShape
                           sh:description "End node of the turn movement: an existing node, or a node created in the same scenario."@en ;
                           sh:or          ( [ sh:class ex:TransportNode ] [ sh:class ex:TransportNodeChange ] ) ;
                           sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:minCount    1 ;
                           sh:maxCount    1 ;
                           sh:message     "A turn movement change can have at most one toNode, referring to a transport node or a transport node change."@en ; ] ;
     sh:property         [ sh:path        ex:toNode ;
                           sh:disjoint    ex:fromNode ;
                           sh:severity    sh:Warning ;
                           sh:message     "The toNode of a turn movement change should normally differ from its fromNode (U-turns are reported as a warning)."@en ; ] ;
-    sh:property         [ sh:path        ex:geom ;
-                          sh:name        "geometry"@en ;
-                          sh:description "Linestring geometry of the turn movement (WKT, optionally prefixed with a CRS IRI)."@en ;
-                          sh:datatype    geo:wktLiteral ;
-                          sh:pattern     "^\\s*(<[^>]+>\\s*)?LINESTRING\\s*(Z|M|ZM)?\\s*\\(" ;
-                          sh:flags       "i" ;
+    sh:property         [ sh:path        ex:carAccessible ;
+                          sh:name        "car accessible"@en ;
+                          sh:description "Whether the turn movement is permitted for cars."@en ;
+                          sh:datatype    xsd:boolean ;
                           sh:maxCount    1 ;
-                          sh:message     "A turn movement change can have at most one (linestring) geometry."@en ; ] ;
+                          sh:message     "A turn movement change can have at most one boolean carAccessible."@en ; ] ;
+    sh:property         [ sh:path        ex:truckAccessible ;
+                          sh:name        "truck accessible"@en ;
+                          sh:description "Whether the turn movement is permitted for trucks."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can have at most one boolean truckAccessible."@en ; ] ;
+    sh:property         [ sh:path        ex:bicycleAccessible ;
+                          sh:name        "bicycle accessible"@en ;
+                          sh:description "Whether the turn movement is permitted for bicycles."@en ;
+                          sh:datatype    xsd:boolean ;
+                          sh:maxCount    1 ;
+                          sh:message     "A turn movement change can have at most one boolean bicycleAccessible."@en ; ] ;
+    sh:or               ( [ sh:path ex:carAccessible ;     sh:minCount 1 ]
+                          [ sh:path ex:truckAccessible ;   sh:minCount 1 ]
+                          [ sh:path ex:bicycleAccessible ; sh:minCount 1 ] ) ;
+    sh:message          "A turn movement change must change the accessibility for at least one transport mode."@en ;
     sh:sparql           omg-shacl:ChangedElementRequiredConstraint ,
                         omg-shacl:ChangedElementForbiddenOnCreateConstraint ,
                         omg-shacl:DeleteWithoutPropertiesConstraint ,
@@ -707,12 +728,13 @@ omg-shacl:UpdateWithChangeConstraint
 
 # ── EXECUTION LAYER ───────────────────────────────────────────────────────────
 
-omg-agent:traffic-scout-v2-3
+# <!-- TML COMMENT: There are no public package/dowload locations to link to -->
+omg-agent:traffic-scout-v3-0
     a                        mocat:Agent ;
     foaf:name                "Traffic Scout"@en ;
-    spdx-sw:packageVersion   "2.3.0" ;
-    spdx-sw:packageUrl       "pkg:github/tml-leuven/traffic-scout@2.3.0"^^xsd:anyURI ;
-    spdx-sw:downloadLocation <https://github.com/tml-leuven/traffic-scout/releases/tag/v2.3.0> ;
+    spdx-sw:packageVersion   "3.0.4" ;
+    spdx-sw:packageUrl       "pkg:github/tml-leuven/traffic-scout@3.0.4"^^xsd:anyURI ;
+    spdx-sw:downloadLocation <https://github.com/tml-leuven/traffic-scout/releases/tag/v3.0.4> ;
     spdx-sw:homePage         <https://github.com/tml-leuven/traffic-scout> ;
     spdx-sw:primaryPurpose   spdx-purpose:application .
 
@@ -722,13 +744,13 @@ spdx-purpose:application
 omg-simulationrun:run-001
     a                      prov:Activity ;
     dcterms:title            "Traffic Scout run 001 — Kortrijk 2026-06-01"@en ;
-    dcterms:description    "Traffic Scout simulation run over the Kortrijk transport network."@en ;
+    dcterms:description    "Traffic Scout simulation run on the x-CITE Kortrijk transport network."@en ;
     p-plan:correspondsToStep omg-simulationmodel:traffic-scout ;
     sosa:usedProcedure       omg-simulationmodel:traffic-scout ;
-    prov:wasAssociatedWith   omg-agent:traffic-scout-v2-3 ;
+    prov:wasAssociatedWith   omg-agent:traffic-scout-v3-0 ;
     prov:startedAtTime     "2026-06-01T00:00:00Z"^^xsd:dateTime ;
     prov:endedAtTime       "2026-06-01T00:12:59Z"^^xsd:dateTime ;
-    prov:wasAssociatedWith   omg-agent:traffic-scout-v2-3 ;
+    prov:wasAssociatedWith   omg-agent:traffic-scout-v3-0 ;
     prov:used              omg-dataset:xcite-kortrijk-network ;
     prov:generated           omg-dataset:traffic-scout-output-run-001 .
 
@@ -737,11 +759,12 @@ omg-simulationrun:run-001
 
 # Input dataset — used by the run, never generated by it
 
+# <!-- TML COMMENT: The OriginDestinationMatrixSchema and TrafficChangeScenarioSchema are missing here?-->
 omg-dataset:xcite-kortrijk-network
     a                            dcat:Dataset ;
     dcterms:title                "xCite Kortrijk Transport network"@en ;
     dcterms:description          """This dataset contains a routable transport network
-that was derived from OpenStreetMap data."""@en ;
+that was derived from OpenStreetMap data and extended with traffic-light control schemes and local information."""@en ;
     dcat:keyword                 "transport network"@en, "OpenStreetMap"@en ;
     dcat:theme                   <http://publications.europa.eu/resource/authority/data-theme/TRAN> ;
     dcat:theme                   <http://www.eionet.europa.eu/gemet/concept/11087> ;
@@ -765,19 +788,19 @@ omg-distribution:xcite-kortrijk-network-geojson
 # Output dataset — generated by the run, never used as input of the same run
 omg-dataset:traffic-scout-output-run-001
     a                             dcat:Dataset ;
-    dcterms:title                 "Traffic Scout simulation output — Ghent 2026-06-01"@en ;
-    dcterms:description           "Simulated traffic flow counts per road segment for Ghent on 2026-06-01."@en ;
-    dcat:keyword                  "traffic flow"@en, "simulation"@en, "Ghent"@en ;
+    dcterms:title                 "Traffic Scout simulation output — Kortrijk 2026-06-01"@en ;
+    dcterms:description           "Simulated traffic flow counts per road segment for Kortrijk on 2026-06-01."@en ;
+    dcat:keyword                  "traffic flow"@en, "simulation"@en, "Kortrijk"@en ;
     dcat:theme                    <http://publications.europa.eu/resource/authority/data-theme/TRAN> ;
     dcterms:publisher             ex:OMG ;
     dcterms:issued                "2026-06-01"^^xsd:date ;
     p-plan:correspondsToVariable  omg-schema:SimulationOutputSchema ;
     mocat:conformsToSpecification omg-schema:SimulationOutputSchema ;
-    dcat:distribution             omg-distribution:traffic-scout-output-run-001-csv .
+    dcat:distribution             omg-distribution:traffic-scout-output-run-001-geojson .
 
-omg-distribution:traffic-scout-output-run-001-csv
+omg-distribution:traffic-scout-output-run-001-geojson
     a                dcat:Distribution ;
-    dcterms:title    "Traffic Scout output CSV"@en ;
-    dcterms:format   <http://publications.europa.eu/resource/authority/file-type/CSV> ;
+    dcterms:title    "Traffic Scout output GeoJSON"@en ;
+    dcterms:format   <http://publications.europa.eu/resource/authority/file-type/GEOJSON> ;
     dcat:accessURL   <https://data.omgeving.vlaanderen.be/id/dataset/traffic-scout-output-run-001> ;
-    dcat:downloadURL <https://data.omgeving.vlaanderen.be/files/traffic-scout-output-run-001.csv> .
+    dcat:downloadURL <https://data.omgeving.vlaanderen.be/files/traffic-scout-output-run-001.geojson> .
