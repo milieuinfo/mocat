@@ -14,7 +14,7 @@ the execution, and the data artefacts.
 ---
 
 ## Three-layer structure
-<!-- TML-comment Probably TrafficChangeScenarioSchema still needs to be added (also in the data layer?)  -->
+
 ```mermaid
 flowchart TD
     subgraph PLAN["PLAN LAYER"]
@@ -27,11 +27,14 @@ flowchart TD
         OriginDestinationMatrixSchema`"]):::spec
         RCIS(["`**DataSpec** (input)
         RunConfigurationSchema`"]):::spec
+        TCSS(["`**DataSpec** (input)
+        TrafficChangeScenarioSchema`"]):::spec
         OS(["`**DataSpec** (output)
         SimulationOutputSchema`"]):::spec
         M -->|mocat:input| IS
         M -->|mocat:input| ODIS
         M -->|mocat:input| RCIS
+        M -->|mocat:input| TCSS
         M -->|mocat:output| OS
     end
 
@@ -50,6 +53,8 @@ flowchart TD
         xcite-kortrijk-od-demand`"]):::data
         DRC(["`**Dataset** (input)
         run-001-configuration`"]):::data
+        DTCS(["`**DataSpec** (input)
+        xcite-kortrijk-TrafficChangeScenario`"]):::data
         DO(["`**Dataset** (output)
         traffic-scout-output-run-001`"]):::data
     end
@@ -58,6 +63,7 @@ flowchart TD
     R -->|prov:used| DI
     R -->|prov:used| DOD
     R -->|prov:used| DRC
+    R -->|prov:used| DTCS
     R -->|prov:generated| DO
     DI -->|mocat:conformsToSpecification| IS
     DOD -->|mocat:conformsToSpecification| ODIS
@@ -191,11 +197,6 @@ Links back to the model via `p-plan:correspondsToStep` and to the software agent
 | `prov:used` | `omg-dataset:run-001-traffic-change-scenario` (input) |
 | `prov:generated` | `omg-dataset:traffic-scout-output-run-001` (output) |
 
-<!-- TML COMMENT: A run uses the transport network, OD demand, run configuration and
-traffic change scenario as input. Only the transport network dataset is described in the
-RDF so far; the other input datasets still need to be added there. -->
-
----
 
 ## Data layer
 
