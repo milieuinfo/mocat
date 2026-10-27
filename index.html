@@ -548,7 +548,6 @@ of multimodal traffic flows at the mesoscopic level."""@en ;
     dcat:landingPage    &lt;https://www.tmleuven.be/en/navigation/Traffic-Scout&gt; ;
     dcat:keyword        "traffic"@en, "simulation"@en ;
     dcterms:publisher   ex:TML ;
-    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
     dcat:theme          &lt;//www.eionet.europa.eu/gemet/concept/7702&gt; ;
     dcterms:publisher   ex:TML ;
     dcat:version        "Kortrijk-d3.1@v2.3.0" ;
@@ -561,26 +560,29 @@ of multimodal traffic flows at the mesoscopic level."""@en ;
     mocat:output        omg-schema:SimulationOutputSchema .
 
 
-&lt;http://www.eionet.europa.eu/gemet/concept/11087&gt;
-      skos:prefLabel "theory of the environment"@en.
 &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt;
       skos:prefLabel "simulation"@en.
   </pre>
         </aside>
+        <section data-dfn-for="title">
+            <h4>Property: title</h4>
+            <p>A <dfn>title</dfn> of a [=simulation model=] is a name given to the resource. </p>
+        </section>
+
+        <section data-dfn-for="description">
+            <h4>Property: description</h4>
+            <p>A <dfn>description</dfn> of a [=simulation model=] is a free-text account of the resource. </p>
+        </section>
 
 
         <section data-dfn-for="keyword">
             <h4>Property: keyword</h4>
             <p>A <dfn>keyword</dfn> for a [=simulation model=] is a free-text tag describing the simulation model. </p>
-
-
         </section>
-
         <section data-dfn-for="theme">
             <h4>Property: theme</h4>
             <p>A <dfn>theme</dfn> for a [=simulation model=] is a concept from a controlled vocabulary that categorizes the resource.
-                It is recommended to include '<a href="http://www.eionet.europa.eu/gemet/concept/7702">simulation</a>' and
-                '<a href="http://www.eionet.europa.eu/gemet/concept/11087">theory of the environment'</a> concepts from the [[GEMET]].
+                It is recommended to include the '<a href="http://www.eionet.europa.eu/gemet/concept/7702">simulation</a>' concept from [[GEMET]].
             </p>
         </section>
 
@@ -588,6 +590,10 @@ of multimodal traffic flows at the mesoscopic level."""@en ;
             <h4>Property: input</h4>
             <p>The <dfn>input schema</dfn> of a [=simulation model=] is a data specification that describes
                 how input datasets of a [=simulation run=] must be structured. </p>
+            <ul>
+                <li><b>RDF property: </b>mocat:input</li>
+                <li><b>Range: </b>p-plan:Variable (data specification)</li>
+            </ul>
         </section>
 
 
@@ -597,8 +603,15 @@ of multimodal traffic flows at the mesoscopic level."""@en ;
                 how an output dataset of a [=simulation run=] is structured. </p>
         </section>
 
+        <section data-dfn-for="landingPage">
+            <h4>Dataset available only behind some Web page</h4>
+            <p><code>ex:dataset-002</code> is available as a CSV file. However <code>ex:dataset-002</code> can only be obtained through some Web page
+                where the user needs to follow some links, provide some information and check some boxes
+                before accessing the data.</p>
 
-    </section>
+
+
+        </section>
 
 
     <section data-dfn-for="DataSpecification">
