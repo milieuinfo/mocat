@@ -55,11 +55,6 @@
 
         <!-- ── Testing ──────────────────────────────────────────────── -->
         <dependency>
-            <groupId>be.vlaanderen.omgeving.mocat</groupId>
-            <artifactId>mocat-owl-validator</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.11.3</version>

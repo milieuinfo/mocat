@@ -12,7 +12,7 @@
             edDraftURI: "https://github.com/milieuinfo/mocat/commits/main",
             commitHistoryURL: "https://github.com/milieuinfo/mocat/commits/main",
             logos: [{
-                src: "./img/x-cite-logo.svg",
+                src: "x-cite-logo.svg",
                 alt: "x-CITE",
                 width: 200,
                 height: 48,
@@ -20,25 +20,48 @@
             }],
             editors: [{
                 name: "Tom Van Gulck",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Lieven Raes",
-                url: "http://your-site.com",
+                url: "https://www.vlaanderen.be/digitaal-vlaanderen",
+                company: "Agentschap Digitaal Vlaanderen"
+            }, {
+                name: "Tom Callens",
+                url: "https://www.vlaanderen.be/digitaal-vlaanderen",
+                company: "Agentschap Digitaal Vlaanderen"
             }, {
                 name: "Veerle Timmermans",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Karen Bosmans",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Geert Van Haute",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }, {
                 name: "Pieter Fannes",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
+            }, {
+                name: "Rodric Frederix",
+                url: "https://www.tmleuven.be/en/",
+                company: "Transport & Mobility Leuven"
+            }, {
+                name: "Joren Vanherck",
+                url: "https://www.tmleuven.be/en/",
+                company: "Transport & Mobility Leuven"
+            }, {
+                name: "Amir Hakim",
+                url: "https://www.futureinsight.nl/",
+                company: "Future Insight / Clearly"
             }, {
                 name: "Stijn Goedertier",
-                url: "http://your-site.com",
+                url: "https://omgeving.vlaanderen.be",
+                company: "Departement Omgeving"
             }],
             github: {
                 branch: "main",
@@ -47,10 +70,25 @@
             // See https://respec.org/docs/#xref for usage.
             xref: "web-platform",
             localBiblio: {
+                "MOCAT": {
+                    title: "Simulation model vocabulary and API (MoCAT)",
+                    href: "https://github.com/milieuinfo/mocat",
+                    authors: ["Departement Omgeving"],
+                },
                 "P-PLAN": {
                     title: "The P-PLAN Ontology",
                     href: "http://purl.org/net/p-plan",
                     authors: ["Daniel Garijo", "Yolanda Gil"],
+                },
+                "SPDX": {
+                    title: "SPDX 3.0.1 Specification",
+                    href: "https://spdx.github.io/spdx-spec/v3.0.1/",
+                    authors: ["SPDX Workgroup"],
+                },
+                "GEOSPARQL": {
+                    title: "OGC GeoSPARQL - A Geographic Query Language for RDF Data",
+                    href: "https://www.ogc.org/standards/geosparql/",
+                    authors: ["Open Geospatial Consortium"],
                 },
                 "X-CITE-P-PLAN": {
                     title: "X-Cite cityverse project management plan",
@@ -105,6 +143,7 @@
         reduce the effort required for a consumer to interact with a new provider.
     </p>
 </section>
+
 <section id="requirements" class="informative">
     <h2>Requirements</h2>
 
@@ -113,7 +152,7 @@
         In both fields, a wide variety of simulation models are being used to assess the environmental impact of
         changes on, for example, traffic flows, air quality, water quality, noise, erosion, water levels, or emission of
         greenhouse gasses.
-        In this context, we look at a <strong>distributed systems</strong>: the systems for running simulation models
+        In this context, we look at <strong>distributed systems</strong>: the systems for running simulation models
         are separate from the system of environmental permit management or spatial planning.
         This stems from the variety and complexity of simulation models, making it impractical to embed them in a
         monolithic system.
@@ -122,12 +161,12 @@
         The impact assessment can be carried out <i>before</i> an environmental permit is formally requested
         to pre-assess the impact of the proposed changes (preparatory phase), or <i>after</i> the formal request has
         been submitted to underpin the decision process (evaluation phase).
-        The simulation runs that are used in the decision-making process must be reproducible this requires that all
-        information regarding input datasets, context, exact model version is persisted and available for inspection.
+        The simulation runs that are used in the decision-making process must be reproducible; this requires that all
+        information regarding input datasets, context and exact model version is persisted and available for
+        inspection.
         Depending on the context, the impact assessment can be carried out by the public administration, business or
         citizen.
     </p>
-
 
     <figure>
   <pre class="diagram mermaid">
@@ -163,84 +202,89 @@ graph LR
         <figcaption>Use of simulation model services in the public sector.</figcaption>
     </figure>
 
-    <section id="uc-discover"></section>
-    <h2>Discover simulation models</h2>
+    <section id="uc-discover">
+        <h3>Discover simulation models</h3>
 
-    <p>Users must be able to discover simulation models by searching for and comparing simulation models using various
-        descriptive metadata fields of which title, description, download URL and service endpoint are the most
-        important.
-        Other fields can be keywords, usage constraints, ownership, licensing information,
-        quality assessments [[VOCAB-DQV]], compliance with standards, source code repository URL,
-        release URL, invocation mode (whether results of a simulation run are presented synchronously
-        or asynchronously to a user).
-    </p>
+        <p>Users must be able to discover simulation models by searching for and comparing simulation models using
+            various descriptive metadata fields of which title, description, download URL and service endpoint are the
+            most important.
+            Other fields can be keywords, themes, usage constraints, ownership, licensing information,
+            quality assessments [[VOCAB-DQV]], compliance with standards, source code repository URL,
+            release URL, invocation mode (whether results of a simulation run are presented synchronously
+            or asynchronously to a user).
+        </p>
 
-    <p>A simulation model is the <i>whole</i> of method, algorithm, implemented in software, documentation, etc.
-        A simulation model can be used as software or as a service.</p>
+        <p>A simulation model is the <i>whole</i> of method, algorithm, implemented in software, documentation, etc.
+            A simulation model can be used as software or as a service.</p>
 
-    <p>In the domain of environmental impact assessment, simulation models can be catalogued in an (open) data
-        catalogue.
-        The need for enhancing the discoverability of simulation tools stems from the fact that there is an increasing
-        number of providers and consumers.
-    </p>
+        <p>In the domain of environmental impact assessment, simulation models can be catalogued in an (open) data
+            catalogue.
+            The need for enhancing the discoverability of simulation tools stems from the fact that there is an
+            increasing number of providers and consumers.
+        </p>
+    </section>
 
+    <section id="uc-test-interoperability">
+        <h3>Test interoperability of input datasets</h3>
 
-    <section id="uc-test-interoperability"></section>
-    <h2>Test interoperability of input datasets</h2>
+        <p>A simulation model service may have several types of input data:</p>
+        <ul>
+            <li>Spatial data: transport networks, spatial features, topological relationships</li>
+            <li>Entity definitions: nodes, machines, people, vehicles</li>
+            <li>Physical properties: noise characteristics, material characteristics, carbon storage parameters, etc.
+            </li>
+            <li>Initial state: starting positions, starting inventory</li>
+            <li>Behavioural characteristics: e.g. travel demand (origin-destination matrices), driver behaviour</li>
+            <li>Run configuration: key-value settings that control a single simulation run</li>
+            <li>Scenario data: change of which the impact is assessed: for example, reforestation on CO2 emissions,
+                buffer zones on soil erosion, or the creation, update and removal of roads in a transport network.
+                Particularly, this input is often provided by the consumer of a simulation model.
+            </li>
+        </ul>
+        <p>
+            Users must be able to assess via automated reasoning which input datasets are compatible with a
+            simulation model based on the data specification.</p>
 
-    <p>A simulation model service may have severa types of input data:
-    <ul>
-        <li>Spatial data: transport networks, spatial features, topological relationships</li>
-        <li>Entity definitions: nodes, machines, people, vehicles</li>
-        <li>Physical properties: noise characteristics, material characteristics, carbon storage parameters, etc.</li>
-        <li>Initial state: starting positions, starting inventory</li>
-        <li>Behavioural characteristics:</li>
-        <li>Scenario data: change of which the impact is assessed: for example, reforestation on CO2 emissions,
-            buffer zones on soil erosion.
-            Particularly, this input is often provided by the consumer of a simulation model.
-        </li>
-    </ul>
-    Users must be able to assess via automated reasoning which input datasets are compatible with a
-    simulation model based on the data specification.</p>
+        <p>In the context of spatial planning and environmental permit management, the consumer of a simulation model
+            most often only needs to be concerned with providing the correct scenario data to the simulation model.
+            Each simulation model service has a different way of encoding these scenarios in data.
+        </p>
+    </section>
 
-    <p>In the context of spatial planning and environmental permit management, the consumer of a simulation model most
-        often only needs to be concerned with providing the correct scenario data to the simulation model.
-        Each simulation model service has a different way of encoding these scenarios in data.
+    <section id="uc-api">
+        <h3>Start a simulation run via a universal interface</h3>
+        <p>It must be possible to run simulation models via a universal Application Programming Interface (API).
+            The input and output parameters of the API methods are based on a common metamodel.
+            A user can configure and execute a simulation run via a standardized interface.
+            The execution must be asynchronous, allowing for manual interventions (e.g. calibration of input data)
+            prior to executing the model.</p>
+    </section>
 
-    </p>
-
-    <section id="uc-api"></section>
-    <h2>Start a simulation run via a universal interface</h2>
-    <p>It must be possible to run simulation models via a universal Application Programming Interface (API).
-        The input and output parameters of the API methods are based on a common metamodel.
-        A user can configure and execute a simulation run via a standardized interface.
-        The execution must be asynchronous, allowing for manual interventions (e.g. calibration of input data)
-        prior to executing the model.</p>
-
-
-    <section id="uc-reproduce-run"></section>
-    <h2>Reproduce a simulation run</h2>
-    <p>Metadata captures version history, parameter sets, data provenance, and software dependencies so that
-        simulation results can be reproduced, audited, or certified, even when original creators are no longer
-        involved. [[PROV-O]]</p>
-    <p>In the context of spatial planning and environmental permit management, this use case is important. </p>
-
+    <section id="uc-reproduce-run">
+        <h3>Reproduce a simulation run</h3>
+        <p>Metadata captures version history, parameter sets, data provenance, and software dependencies so that
+            simulation results can be reproduced, audited, or certified, even when original creators are no longer
+            involved. [[PROV-O]]</p>
+        <p>In the context of spatial planning and environmental permit management, this use case is important. </p>
+    </section>
 </section>
 
 <section id="overview" class="informative">
     <h2>Vocabulary overview</h2>
-    <!--
-    <div class="note" role="note" id="note0">
-        <div role="heading" class="note-title marker" id="h-note-3" aria-level="4"><span>Requirments first</span></div>
-        <aside class="">
-            <p>
-                Let us first discuss requirements (such as use cases and definitions) and not be overly
-                distracted by data models and existing ontologies.
-            </p>
-        </aside>
-    </div>
-    -->
 
+    <p>MoCAT is organised in three layers, which are all visible in the end-to-end example in this document:</p>
+    <ul>
+        <li><b>Plan layer:</b> the [=simulation model=] (a <code>prov:Plan</code>) and the
+            [=data specification=]s (<code>p-plan:Variable</code>, expressed as [[SHACL]] shapes) of its inputs and
+            outputs.
+        </li>
+        <li><b>Execution layer:</b> the [=simulation run=] (a <code>prov:Activity</code>) and the software
+            [=agent=] that executed it.
+        </li>
+        <li><b>Data layer:</b> the input and output [=dataset=]s of a run, each with one or more
+            <code>dcat:Distribution</code>s.
+        </li>
+    </ul>
 
     <figure>
   <pre class="diagram mermaid">
@@ -250,11 +294,13 @@ config:
   look: handDrawn
 ---
 classDiagram
-    class Resource["Resource
+    class Resource["CatalogedResource
       dcat:Resource"] {
         dct:title
         dct:description
         dct:identifier
+        dcat:keyword
+        dcat:theme
         dct:issued
         dct:modified
         dct:language
@@ -265,46 +311,43 @@ classDiagram
       dcat:Catalog"] {
         dcat:dataset
         dcat:service
-        dct:publisher
-        dct:language
-        dct:issued
-        dct:modified
+        mocat:model
     }
 
     class SimulationModel["SimulationModel
       mocat:SimulationModel
       prov:Plan · p-plan:Step"] {
-        dct:title
-        dct:description
-        dcat:keyword
-        dcat:theme
-        dct:publisher
-        dct:issued
-        dct:modified
+        dcat:landingPage
+        dcat:version
+        mocat:input
+        mocat:output
         dcat:endpointURL
     }
 
     class SimulationRun["SimulationRun
       mocat:SimulationRun
       prov:Activity"] {
-        dct:title
-        dct:description
         prov:startedAtTime
         prov:endedAtTime
+        prov:used
+        prov:generated
+        p-plan:correspondsToStep
+        sosa:usedProcedure
     }
 
     class DataSpecification["DataSpecification
       mocat:DataSpecification
       p-plan:Variable"] {
-        dct:title
-        dct:description
+        dct:hasPart
     }
 
     class NodeShape["NodeShape
       sh:NodeShape"] {
+        rdfs:label
+        dct:description
         sh:targetClass
-        sh:name
-        sh:description
+        sh:property
+        sh:sparql
     }
 
     class PropertyShape["PropertyShape
@@ -315,20 +358,16 @@ classDiagram
         sh:datatype
         sh:minCount
         sh:maxCount
+        sh:message
     }
 
     class Dataset["Dataset
       dcat:Dataset"] {
-        dct:title
-        dct:description
-        dcat:keyword
-        dcat:theme
-        dct:publisher
-        dct:issued
-        dct:modified
-        dct:hasVersion
         dcat:distribution
-        spdx-core:verifiedUsing
+        mocat:conformsToSpecification
+        p-plan:correspondsToVariable
+        prov:wasGeneratedBy
+        prov:wasDerivedFrom
     }
 
     class Distribution["Distribution
@@ -342,11 +381,8 @@ classDiagram
 
     class DataService["DataService
       dcat:DataService"] {
-        dct:title
-        dct:description
         dcat:endpointURL
         dcat:endpointDescription
-        spdx-sw:packageVersion
     }
 
     class Agent["Agent
@@ -360,6 +396,13 @@ classDiagram
         spdx-sw:primaryPurpose
     }
 
+    class Organization["Organization
+      foaf:Organization · prov:Agent"] {
+        foaf:name
+        foaf:page
+        org:identifier
+    }
+
     style SimulationModel   fill:#BFDBFE,stroke:#2563EB,color:#000
     style SimulationRun     fill:#BBF7D0,stroke:#16A34A,color:#000
     style Dataset           fill:#FED7AA,stroke:#EA580C,color:#000
@@ -369,9 +412,11 @@ classDiagram
     style PropertyShape     fill:#DDD6FE,stroke:#7C3AED,color:#000
     style Agent             fill:#E0F2FE,stroke:#0284C7,color:#000
     style DataService       fill:#E0F2FE,stroke:#0284C7,color:#000
+    style Organization      fill:#E0F2FE,stroke:#0284C7,color:#000
 
     %% Inheritance (rdfs:subClassOf)
     Resource <|-- Dataset
+    Resource <|-- SimulationModel
     Resource <|-- DataService
     Resource <|-- Catalog
     Resource <|-- DataSpecification
@@ -385,9 +430,12 @@ classDiagram
     DataService --> Dataset : dcat servesDataset
     SimulationModel --> DataSpecification : mocat input
     SimulationModel --> DataSpecification : mocat output
+    Resource --> Organization : dct publisher
     Dataset --> DataSpecification : mocat conformsToSpecification
     Dataset --> DataSpecification : p-plan correspondsToVariable
-    DataSpecification --> NodeShape : sh node
+    Dataset --> SimulationRun : prov wasGeneratedBy
+    Dataset --> Dataset : prov wasDerivedFrom
+    DataSpecification --> NodeShape : dct hasPart
     NodeShape --> PropertyShape : sh property
     SimulationRun --> Dataset : prov used
     SimulationRun --> Dataset : prov generated
@@ -402,10 +450,13 @@ classDiagram
 
 <section id="namespaces" class="normative">
     <h2>Namespaces</h2>
-    <p>The namespace for MoCat is <code>http://TODO#</code>.
+    <p>The namespace for MoCAT is <code>http://example.org/ontology/mocat#</code>.
+        This is a placeholder that will be replaced by a persistent URI once the vocabulary is published.
     </p>
 
-    <p>Namespaces and prefixes used in normative parts of this specification are shown in the following table.</p>
+    <p>Namespaces and prefixes used in normative parts of this specification are shown in the following table.
+        The <code>omg-*</code> prefixes and <code>ex</code> are only used in examples and are not part of the
+        vocabulary.</p>
 
     <table id="table-namespaces" class="simple">
         <thead>
@@ -429,10 +480,10 @@ classDiagram
         <tr>
             <td><code>dcat</code></td>
             <td><code>http://www.w3.org/ns/dcat#</code></td>
-            <td>[[VOCAB-DCAT]]
+            <td>[[VOCAB-DCAT-3]]</td>
         </tr>
         <tr>
-            <td><code>dcterms</code></td>
+            <td><code>dcterms</code> (<code>dct</code> in diagrams)</td>
             <td><code>http://purl.org/dc/terms/</code></td>
             <td>[[DCTERMS]]</td>
         </tr>
@@ -442,14 +493,24 @@ classDiagram
             <td>[[FOAF]]</td>
         </tr>
         <tr>
+            <td><code>geo</code></td>
+            <td><code>http://www.opengis.net/ont/geosparql#</code></td>
+            <td>[[GEOSPARQL]]</td>
+        </tr>
+        <tr>
             <td><code>locn</code></td>
             <td><code>http://www.w3.org/ns/locn#</code></td>
             <td>[[LOCN]]</td>
         </tr>
         <tr>
             <td><code>mocat</code></td>
-            <td><code>http://TODO#</code></td>
+            <td><code>http://example.org/ontology/mocat#</code></td>
             <td>[[MOCAT]]</td>
+        </tr>
+        <tr>
+            <td><code>org</code></td>
+            <td><code>http://www.w3.org/ns/org#</code></td>
+            <td>[[VOCAB-ORG]]</td>
         </tr>
         <tr>
             <td><code>owl</code></td>
@@ -487,6 +548,26 @@ classDiagram
             <td>[[SKOS-REFERENCE]]</td>
         </tr>
         <tr>
+            <td><code>sosa</code></td>
+            <td><code>http://www.w3.org/ns/sosa/</code></td>
+            <td>[[VOCAB-SSN]]</td>
+        </tr>
+        <tr>
+            <td><code>spdx-sw</code></td>
+            <td><code>https://spdx.org/rdf/3.0.1/terms/Software/</code></td>
+            <td>[[SPDX]]</td>
+        </tr>
+        <tr>
+            <td><code>spdx-purpose</code></td>
+            <td><code>https://spdx.org/rdf/3.0.1/terms/Software/SoftwarePurpose/</code></td>
+            <td>[[SPDX]]</td>
+        </tr>
+        <tr>
+            <td><code>spdx-core</code></td>
+            <td><code>https://spdx.org/rdf/3.0.1/terms/Core/</code></td>
+            <td>[[SPDX]]</td>
+        </tr>
+        <tr>
             <td><code>vcard</code></td>
             <td><code>http://www.w3.org/2006/vcard/ns#</code></td>
             <td>[[VCARD-RDF]]</td>
@@ -506,11 +587,143 @@ classDiagram
         The MoCAT vocabulary makes use of the [[VOCAB-DCAT-3]], [[PROV-O]], and [[P-PLAN]] specifications.
         The MoCAT vocabulary specification is available at <a
             href="mocat-ontology/src/main/resources/ontologies/mocat-ontology.ttl">mocat-ontology.ttl</a>.
+        A complete end-to-end example (Traffic Scout) is used throughout this section.
     </p>
-    <section data-dfn-for="Simulation Model">
+
+    <section id="class-cataloged-resource" data-dfn-for="Cataloged Resource">
+        <h3>Class: Cataloged Resource (dcat:Resource)</h3>
+        <p>A <dfn>cataloged resource</dfn> is a <code>dcat:Resource</code>: anything that can be described in a
+            catalog [[VOCAB-DCAT-3]]. The [=catalog=], [=simulation model=], [=data specification=],
+            [=simulation run=] and [=dataset=] classes are subclasses of cataloged resource and inherit the
+            properties below. They are therefore not repeated in the sections of these classes.
+            A [=distribution=] and an [=agent=] are not cataloged resources.</p>
+        <aside class="example" title="Cataloged resource properties on a simulation model">
+  <pre class="ttl">
+omg-simulationmodel:traffic-scout
+    dcterms:title       "Traffic Scout"@en ;
+    dcterms:description "Traffic Scout is a traffic simulation model ..."@en ;
+    dcat:keyword        "traffic"@en, "simulation"@en ;
+    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
+    dcterms:publisher   ex:TML ;
+    dcterms:issued      "2026-03-15"^^xsd:date ;
+    dcterms:modified    "2026-03-15"^^xsd:date .
+  </pre>
+        </aside>
+
+        <section id="cr-title">
+            <h4>Property: title (<code>dcterms:title</code>)</h4>
+            <p>A <dfn>title</dfn> of a [=cataloged resource=] is a name given to the resource.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcterms:title</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>rdf:langString</li>
+            </ul>
+        </section>
+
+        <section id="cr-description">
+            <h4>Property: description (<code>dcterms:description</code>)</h4>
+            <p>A <dfn>description</dfn> of a [=cataloged resource=] is a free-text account of the resource.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcterms:description</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>rdf:langString</li>
+            </ul>
+        </section>
+
+        <section id="cr-keyword">
+            <h4>Property: keyword (<code>dcat:keyword</code>)</h4>
+            <p>A <dfn>keyword</dfn> for a [=cataloged resource=] is a free-text tag describing the resource.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcat:keyword</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>rdf:langString</li>
+            </ul>
+        </section>
+
+        <section id="cr-theme">
+            <h4>Property: theme (<code>dcat:theme</code>)</h4>
+            <p>A <dfn>theme</dfn> for a [=cataloged resource=] is a concept from a controlled vocabulary that categorizes the resource, for example the EU data themes or [[GEMET]].
+                For a [=simulation model=] it is recommended to include the <a href="http://www.eionet.europa.eu/gemet/concept/7702">simulation</a> concept from [[GEMET]].</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcat:theme</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>skos:Concept</li>
+            </ul>
+        </section>
+
+        <section id="cr-publisher">
+            <h4>Property: publisher (<code>dcterms:publisher</code>)</h4>
+            <p>The <dfn>publisher</dfn> of a [=cataloged resource=] is the organisation that makes the resource available.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcterms:publisher</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>foaf:Agent (typically <code>foaf:Organization</code>)</li>
+            </ul>
+        </section>
+
+        <section id="cr-issued">
+            <h4>Property: issued (<code>dcterms:issued</code>)</h4>
+            <p>The <dfn>issued</dfn> date of a [=cataloged resource=] is the date of its formal issuance.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcterms:issued</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>xsd:date</li>
+            </ul>
+        </section>
+
+        <section id="cr-modified">
+            <h4>Property: modified (<code>dcterms:modified</code>)</h4>
+            <p>The <dfn>modified</dfn> date of a [=cataloged resource=] is the date of its most recent change.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcterms:modified</code></li>
+                <li><b>Domain: </b><code>dcat:Resource</code></li>
+                <li><b>Range: </b>xsd:date</li>
+            </ul>
+        </section>
+
+    </section>
+
+    <section id="class-catalog" data-dfn-for="Catalog">
+        <h3>Class: Catalog (dcat:Catalog)</h3>
+        <p>A <dfn>catalog</dfn> is a <code>dcat:Catalog</code> that lists simulation models and the datasets that
+            are used or produced by them. A catalog is a [=cataloged resource=]; the properties below are specific to
+            catalogs.</p>
+        <table class="simple">
+            <thead>
+            <tr><th>Property</th><th>Range</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+            <tr><td><code>mocat:model</code></td><td>[=simulation model=]</td><td>A simulation model listed in the catalog.</td></tr>
+            <tr><td><code>dcat:dataset</code></td><td>[=dataset=]</td><td>An input or output dataset listed in the catalog.</td></tr>
+            <tr><td><code>dcat:service</code></td><td>dcat:DataService</td><td>A service (e.g. a simulation API endpoint) listed in the catalog.</td></tr>
+            </tbody>
+        </table>
+        <aside class="example" title="Catalog">
+  <pre class="ttl">
+omg-catalog:OpenDataCatalogue
+    a                 dcat:Catalog ;
+    dcterms:title     "Catalogue of Simulation Models"@en ;
+    dcterms:publisher ex:OMG ;
+    mocat:model       omg-simulationmodel:traffic-scout ;
+    dcat:dataset      omg-dataset:xcite-kortrijk-network, omg-dataset:traffic-scout-output-run-001,
+                      omg-dataset:xcite-kortrijk-od-demand, omg-dataset:run-001-configuration,
+                      omg-dataset:run-001-traffic-change-scenario .
+
+ex:OMG
+    a         foaf:Organization, prov:Agent ;
+    foaf:name "Departement Omgeving"@nl .
+  </pre>
+        </aside>
+    </section>
+
+    <section id="class-simulation-model" data-dfn-for="Simulation Model">
         <h3>Class: Simulation Model (prov:Plan)</h3>
 
-        <p>A <dfn>simulation model</dfn> is a tool to make a digital representation of a real-world phenomenon.</p>
+        <p>A <dfn>simulation model</dfn> is a tool to make a digital representation of a real-world phenomenon.
+            Its class is <code>mocat:SimulationModel</code>, a subclass of <code>prov:Plan</code>,
+            <code>p-plan:Step</code> and <code>dcat:Resource</code> ([=cataloged resource=]). Instances should also be explicitly typed as <code>prov:Plan</code>
+            and <code>p-plan:Step</code>, so that they can be found without inference
+            (see the SPARQL query in the implementation report).</p>
 
         <p>A simulation model may have a basis in physics, math and/or statistics.
             In addition to this theoretical foundation, the simulation model is usually implemented
@@ -518,246 +731,522 @@ classDiagram
             the algorithm, and the software that makes it executable.
         </p>
 
+
         <aside class="example" title="Simulation Model">
   <pre class="ttl">
-
 omg-simulationmodel:traffic-scout
-    a                   prov:Plan ;
+    a                   mocat:SimulationModel, prov:Plan, p-plan:Step ;
     dcterms:title       "Traffic Scout"@en ;
-    dcterms:description """Traffic Scout combines an interactive map and a simulation tool to provide insight into local
-traffic flows based on, among other things, local traffic sensors. The technology is based on Telraam data,
-traffic indicators, geodata, and OpenStreetMap. The TS model supports model calculations (including the addition
-of network changes) for near-synchronous operation. The TS tool focuses on applications at the meso-level
-(municipality, district, neighborhood)."""@en ;
-    dcat:keyword        "traffic"@en, "simulation"@en ;
-    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
-    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
+    dcterms:description """Traffic Scout is a traffic simulation model developed by Transport &amp; Mobility Leuven (TML).
+It supports scenario calculations of multimodal traffic flows (car, truck, bicycle) at the mesoscopic level."""@en ;
+    dcat:landingPage    &lt;https://www.tmleuven.be/en/navigation/Traffic-Scout&gt; ;
+    dcat:landingPage    &lt;https://traffic-scout.net/&gt; ;
+    dcat:keyword        "traffic"@en, "simulation"@en, "transport planning"@en, "traffic assignment"@en ;
     dcterms:publisher   ex:TML ;
-    dcterms:issued      "2020-03-15"^^xsd:date ;
-    dcterms:modified    "2020-03-15"^^xsd:date ;
+    dcat:theme          &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
+    dcat:version        "3.0.4" ;
+    dcterms:issued      "2026-03-15"^^xsd:date ;
+    dcterms:modified    "2026-03-15"^^xsd:date ;
     mocat:input         omg-schema:TransportNetworkSchema ;
+    mocat:input         omg-schema:OriginDestinationMatrixSchema ;
+    mocat:input         omg-schema:RunConfigurationSchema ;
+    mocat:input         omg-schema:TrafficChangeScenarioSchema ;
     mocat:output        omg-schema:SimulationOutputSchema .
 
-
-&lt;http://www.eionet.europa.eu/gemet/concept/11087&gt;
-      skos:prefLabel "theory of the environment"@en.
-&lt;http://www.eionet.europa.eu/gemet/concept/7702&gt;
-      skos:prefLabel "simulation"@en.
+ex:TML
+    a             foaf:Organization, prov:Agent ;
+    foaf:name     "Transport &amp; Mobility Leuven"@en ;
+    org:identifier "BE0476.966.024" ;
+    foaf:page     &lt;https://www.tmleuven.be&gt; .
   </pre>
         </aside>
 
-
-        <section data-dfn-for="keyword">
-            <h4>Property: keyword</h4>
-            <p>A <dfn>keyword</dfn> of a [=simulation model=] is a free-text tag describing the simulation model. </p>
-
-            <aside class="example" title="keyword">
-  <pre class="ttl">
-
-omg-simulationmodel:traffic-scout
-   dcat:keyword         "traffic model".
-  </pre>
-            </aside>
-
+        <section id="sm-landingpage">
+            <h4>Property: landing page (<code>dcat:landingPage</code>)</h4>
+            <p>A <dfn>landing page</dfn> of a [=simulation model=] is a web page that gives access to the model or to information about it, for example a product page. A model can have several landing pages.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcat:landingPage</code></li>
+                <li><b>Range: </b>foaf:Document</li>
+            </ul>
         </section>
 
-        <section data-dfn-for="theme">
-            <h4>Property: theme</h4>
-            <p>A <dfn>theme</dfn> of a [=simulation model=] is a concept from a controlled vocabulary that categorizes the resource.
-                It is recommended to include '<a href="http://www.eionet.europa.eu/gemet/concept/7702">simulation</a>' and
-                '<a href="http://www.eionet.europa.eu/gemet/concept/11087">theory of the environment'</a> concepts from the [[GEMET]].
-            </p>
+        <section id="sm-version">
+            <h4>Property: version (<code>dcat:version</code>)</h4>
+            <p>The <dfn>version</dfn> of a [=simulation model=] is the version of the released software. It should equal <code>spdx-sw:packageVersion</code> of the [=agent=] that executes the model.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcat:version</code></li>
+                <li><b>Range: </b>rdfs:Literal</li>
+            </ul>
         </section>
 
-
-        <section data-dfn-for="outputSchema">
-            <h4>Property: outputSchema</h4>
-            <p>The <dfn>output schema</dfn> of a [=simulation model=] is a data specification that describes
-                how an output dataset of a [=simulation run=] is structured. </p>
-
-            <aside class="example" title="output schema">
-  <pre class="ttl">
-
-omg-simulationmodel:traffic-scout
-   mocat:output         omg-schema:TransportNetworkSchema ;
-  </pre>
-            </aside>
-
+        <section id="prop-input">
+            <h4>Property: input (<code>mocat:input</code>)</h4>
+            <p>The <dfn>input schema</dfn> of a [=simulation model=] is a [=data specification=] that describes how an input dataset of a [=simulation run=] must be structured. A model can have several input schemas, for example for a network, a demand matrix, a run configuration and a scenario.</p>
+            <ul>
+                <li><b>RDF property: </b><code>mocat:input</code></li>
+                <li><b>Range: </b><code>p-plan:Variable</code> ([=data specification=])</li>
+            </ul>
         </section>
 
+        <section id="prop-output">
+            <h4>Property: output (<code>mocat:output</code>)</h4>
+            <p>The <dfn>output schema</dfn> of a [=simulation model=] is a [=data specification=] that describes how an output dataset of a [=simulation run=] is structured.</p>
+            <ul>
+                <li><b>RDF property: </b><code>mocat:output</code></li>
+                <li><b>Range: </b><code>p-plan:Variable</code> ([=data specification=])</li>
+            </ul>
+        </section>
+
+        <section id="sm-endpoint">
+            <h4>Property: endpoint URL (<code>dcat:endpointURL</code>)</h4>
+            <p>The <dfn>endpoint URL</dfn> of a [=simulation model=] is the root location or primary endpoint of the service through which the model can be run. </p>
+            <ul>
+                <li><b>RDF property: </b><code>dcat:endpointURL</code></li>
+                <li><b>Range: </b>rdfs:Resource</li>
+            </ul>
+        </section>
 
     </section>
 
-
-    <section data-dfn-for="DataSpecification">
+    <section id="class-data-specification" data-dfn-for="DataSpecification">
         <h3>Class: Data Specification (p-plan:Variable)</h3>
-        <p>A <dfn>data specification</dfn> describes how a dataset must be structured.</p>
+        <p>A <dfn>data specification</dfn> describes how a dataset must be structured.
+            Its class is <code>mocat:DataSpecification</code>, a subclass of <code>p-plan:Variable</code> and
+            <code>dcat:Resource</code> ([=cataloged resource=]).</p>
         <p>Each input and output of a simulation model
             can have its own data specification. The input or output data is not necessarily structured as RDF,
             but the schema must be represented as RDF so that it can be used for automated reasoning about
             the interoperability of input datasets.
             Hence, we require an RDF description of the data structure in the form of [[SHACL]] NodeShapes and
-            PropertyShapes. </p>
+            PropertyShapes. A data specification refers to its NodeShapes with <code>dcterms:hasPart</code>.
+            A NodeShape refers to its PropertyShapes with <code>sh:property</code>.
+            Constraints that cannot be expressed with core SHACL (e.g. topological consistency) are expressed
+            as SHACL-SPARQL constraints (<code>sh:sparql</code>). SHACL-SPARQL does not reuse the Turtle prefix
+            declarations, so the prefixes used in those queries must be declared with <code>sh:declare</code> on an
+            <code>owl:Ontology</code> that is referenced from each constraint with <code>sh:prefixes</code>.</p>
 
 
-        <aside class="example" title="Data specification using SHACL">
+        <p>The Traffic Scout example defines five data specifications:</p>
+        <ul>
+            <li><code>omg-schema:TransportNetworkSchema</code>: nodes, edges, turn movements and zones;</li>
+            <li><code>omg-schema:OriginDestinationMatrixSchema</code>: hourly demand per mode between zones;</li>
+            <li><code>omg-schema:RunConfigurationSchema</code>: key-value settings with unique keys;</li>
+            <li><code>omg-schema:TrafficChangeScenarioSchema</code>: create, update and delete operations
+                (<code>ex:changeOperation</code>) on nodes, edges and turn movements;</li>
+            <li><code>omg-schema:SimulationOutputSchema</code>: simulated flow per edge, mode and hour (output).</li>
+        </ul>
+
+        <aside class="example" title="Prefix declarations for SHACL-SPARQL">
   <pre class="ttl">
-omg-schema:TransportNetworkSchema
-    a              p-plan:Variable ;
-    rdf:type       &lt;http://purl.org/adms/assettype/Schema&gt; ;
-    rdfs:label     "Transport Network schema"@en ;
-    sh:description """A transport network consists of vertices and edges.""" ;
-    sh:node        omg-shacl:TransportVertexShape ;
-    sh:node        omg-shacl:TransportEdgeShape .
-
-omg-shacl:TransportVertexShape
-    a              sh:NodeShape ;
-    sh:targetClass ex:TransportVertex ;
-    sh:property    [ sh:path     ex:geom ;
-                     sh:datatype geo:wktLiteral ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport vertex must have exactly one (point) geometry (geom)." ; ] ;
-    sh:sparql      [ sh:message "Each transport vertex must be connected to at least one transport Edge." ;
-                     sh:select  """
-            SELECT ?this
-            WHERE {
-                FILTER NOT EXISTS { ?edge ex:source ?this . }
-                FILTER NOT EXISTS { ?edge ex:target ?this . }
-            }
-        """ ; ] .
-
-omg-shacl:TransportEdgeShape
-    a              sh:NodeShape ;
-    sh:targetClass ex:TransportEdge ;
-    sh:property    [ sh:path     ex:length ;
-                     sh:datatype xsd:double ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one length property." ; ] ;
-    sh:property    [ sh:path     ex:source ;
-                     sh:class    ex:TransportNode ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one source vertex." ; ] ;
-    sh:property    [ sh:path     ex:sink ;
-                     sh:class    ex:TransportNode ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one sink vertex." ; ] ;
-    sh:property    [ sh:path     ex:geom ;
-                     sh:datatype geo:wktLiteral ;
-                     sh:minCount 1 ;
-                     sh:maxCount 1 ;
-                     sh:message  "A transport edge must have exactly one (linestring) geometry (geom)." ; ] .
+&lt;https://data.omgeving.vlaanderen.be/id/shacl/&gt;
+    a          owl:Ontology ;
+    sh:declare [ sh:prefix    "ex" ;
+                 sh:namespace "http://example.org/"^^xsd:anyURI ] ;
+    sh:declare [ sh:prefix    "rdf" ;
+                 sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] .
   </pre>
         </aside>
 
-        <section data-dfn-for="node">
-            <h4>Property: node</h4>
+        <aside class="example" title="Data specification using SHACL (excerpt)">
+  <pre class="ttl">
+omg-schema:TransportNetworkSchema
+    a                   p-plan:Variable ;
+    dcterms:title       "Transport Network schema"@en ;
+    dcterms:description "A transport network consists of nodes (vertices), edges, turn movements and zones."@en ;
+    dcterms:hasPart     omg-shacl:TransportNodeShape, omg-shacl:TransportEdgeShape, omg-shacl:TurnMovementShape,
+                        omg-shacl:TransportZoneShape .
 
+omg-shacl:TransportNodeShape
+    a                   sh:NodeShape ;
+    rdfs:label          "Transport node Schema"@en ;
+    dcterms:description "A node (vertex) in the transport network."@en ;
+    sh:targetClass      ex:TransportNode ;
+    sh:property         [ sh:path         dcterms:identifier ;
+                          sh:name         "identifier"@en ;
+                          sh:description  "Unique identifier."@en ;
+                          sh:datatype     xsd:integer ;
+                          sh:minExclusive 0 ;
+                          sh:minCount     1 ;
+                          sh:maxCount     1 ] ;
+    sh:property         [ sh:path        ex:geom ;
+                          sh:name        "geometry"@en ;
+                          sh:description "Point geometry of the node (WKT, optionally prefixed with a CRS IRI)."@en ;
+                          sh:datatype    geo:wktLiteral ;
+                          sh:pattern     "^\\s*(&lt;[^&gt;]+&gt;\\s*)?POINT\\s*(Z|M|ZM)?\\s*\\(" ;
+                          sh:flags       "i" ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport node must have exactly one (point) geometry."@en ; ] .
+
+omg-shacl:TransportEdgeShape
+    a                   sh:NodeShape ;
+    rdfs:label          "Transport Edge Schema"@en ;
+    dcterms:description "An edge (link) in the transport network."@en ;
+    sh:targetClass      ex:TransportEdge ;
+    sh:property         [ sh:path         ex:length ;
+                          sh:name         "length"@en ;
+                          sh:description  "Length of the edge in metres."@en ;
+                          sh:datatype     xsd:double ;
+                          sh:minExclusive 0 ;
+                          sh:minCount     1 ;
+                          sh:maxCount     1 ;
+                          sh:message      "A transport edge must have exactly one length property, greater than 0."@en ; ] ;
+    sh:property         [ sh:path        ex:fromNode ;
+                          sh:name        "fromNode"@en ;
+                          sh:description "Start node of the edge."@en ;
+                          sh:class       ex:TransportNode ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one fromNode."@en ; ] ;
+    sh:property         [ sh:path        ex:toNode ;
+                          sh:name        "toNode"@en ;
+                          sh:description "End node of the edge."@en ;
+                          sh:class       ex:TransportNode ;
+                          sh:nodeKind    sh:BlankNodeOrIRI ;
+                          sh:minCount    1 ;
+                          sh:maxCount    1 ;
+                          sh:message     "A transport edge must have exactly one toNode."@en ; ] ;
+    sh:property         [ sh:path     ex:toNode ;
+                          sh:disjoint ex:fromNode ;
+                          sh:severity sh:Warning ;
+                          sh:message  "The toNode of a transport edge should normally differ from its fromNode (loops are reported as a warning)."@en ; ] .
+    # ... further properties (legalSpeedLimit, carAccessible, truckAccessible,
+    #     bicycleAccessible, geom) omitted; see the complete example.
+
+omg-shacl:RunConfigurationShape
+    a                   sh:NodeShape ;
+    sh:targetClass      ex:RunConfiguration ;
+    # ... sh:property constraints for ex:key and ex:value omitted ...
+    sh:sparql           [ sh:message  "A run configuration key must be unique."@en ;
+                          sh:prefixes &lt;https://data.omgeving.vlaanderen.be/id/shacl/&gt; ;
+                          sh:select   """
+            SELECT $this ?key
+            WHERE {
+                $this ex:key ?key .
+                ?other a ex:RunConfiguration ;
+                       ex:key ?key .
+                FILTER (?other != $this)
+            }
+        """ ; ] .
+  </pre>
+        </aside>
+        <section id="dspec-haspart">
+            <h4>Property: has part (<code>dcterms:hasPart</code>)</h4>
+            <p>A <dfn>has part</dfn> of a [=data specification=] is a [[SHACL]] NodeShape that is part of the specification. Each NodeShape targets a class (<code>sh:targetClass</code>), lists its constraints with <code>sh:property</code> and, where core SHACL is insufficient, with <code>sh:sparql</code>.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcterms:hasPart</code></li>
+                <li><b>Range: </b><code>sh:NodeShape</code></li>
+            </ul>
         </section>
 
     </section>
 
-
-    <section data-dfn-for="SimulationRun">
+    <section id="class-simulation-run" data-dfn-for="SimulationRun">
         <h3>Class: Simulation Run (prov:Activity)</h3>
         <p>A <dfn>simulation run</dfn> is a single, complete execution of a [=simulation model=].
-            It has a run configuration that defines the starting conditions (parameters and random seeds),
-            stopping point, and input datasets.</p>
+            Its class is <code>mocat:SimulationRun</code>, a subclass of <code>prov:Activity</code> and
+            <code>dcat:Resource</code> ([=cataloged resource=]).
+            The starting conditions of a run (parameters, random seeds, stopping point) are provided as a run
+            configuration input dataset that conforms to a [=data specification=] of the model; together with the
+            other input datasets, it is linked with <code>prov:used</code>.</p>
         <p>Each input and output of a simulation model
             can have its own [=data specification=]. The data is not necessarily structured as RDF.
             A semantic asset [[VOCAB-ADMS]] can be used to describe the data structure.
             In the case of RDF data, [[SHACL]] must be used. </p>
 
-        <aside class="example" title="Simulation run">
-            <pre>
-omg-simulationrun:abc123
-    a                      prov:Activity ;
-    dcterms:title          "Simulation Run abc123"@en ;
-    dcterms:description    "Traffic Scout simulation run over the Ghent transport network."@en ;
-    prov:startedAtTime     "2026-06-01T00:00:00Z"^^xsd:dateTime ;
-    prov:endedAtTime       "2026-06-01T00:12:59Z"^^xsd:dateTime ;
-    prov:wasAssociatedWith ex:TSSoftwareAgent ;
-    sosa:usedProcedure     omg-simulationmodel:traffic-scout ;
-    prov:used              omg-dataset:osm_tn_dataset .
 
-            </pre>
+        <aside class="example" title="Simulation run">
+  <pre class="ttl">
+omg-simulationrun:run-001
+    a                        mocat:SimulationRun, prov:Activity ;
+    dcterms:title            "Traffic Scout run 001 — Kortrijk 2026-06-01"@en ;
+    dcterms:description      "Traffic Scout simulation run on the x-CITE Kortrijk transport network."@en ;
+    p-plan:correspondsToStep omg-simulationmodel:traffic-scout ;
+    sosa:usedProcedure       omg-simulationmodel:traffic-scout ;
+    prov:wasAssociatedWith   omg-agent:traffic-scout-v3-0 ;
+    prov:startedAtTime       "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    prov:endedAtTime         "2026-06-01T00:12:59Z"^^xsd:dateTime ;
+    prov:used                omg-dataset:xcite-kortrijk-network ;
+    prov:used                omg-dataset:xcite-kortrijk-od-demand ;
+    prov:used                omg-dataset:run-001-configuration ;
+    prov:used                omg-dataset:run-001-traffic-change-scenario ;
+    prov:generated           omg-dataset:traffic-scout-output-run-001 .
+  </pre>
         </aside>
 
-        <section data-dfn-for="used">from which the
-            <h4>Property: used (prov:used)</h4>
-            <p>The <dfn>used</dfn> property of a [=simulation run=] is a reference to one or more input datasets that
-                were used.
-                The input datasets must adhere to the [=input schemas=] of the [=simulation model=].</p>
-
-
+        <section id="run-correspondsToStep">
+            <h4>Property: corresponds to step (<code>p-plan:correspondsToStep</code>)</h4>
+            <p>The <dfn>corresponds to step</dfn> property of a [=simulation run=] relates the run to the [=simulation model=] of which it is an execution.</p>
+            <ul>
+                <li><b>RDF property: </b><code>p-plan:correspondsToStep</code></li>
+                <li><b>Range: </b>[=simulation model=]</li>
+            </ul>
         </section>
 
-        <section data-dfn-for="wasDerivedFrom">
-            <h4>Property: was derived from (prov:wasDerivedFrom)</h4>
-            <p>The <dfn>was derived from</dfn> property of a [=simulation run=] relates to the [=simulation model=]
-                of which the simulation run is an execution. </p>
+        <section id="run-usedProcedure">
+            <h4>Property: used procedure (<code>sosa:usedProcedure</code>)</h4>
+            <p>The <dfn>used procedure</dfn> property of a [=simulation run=] is an optional alias of <code>p-plan:correspondsToStep</code>, for consumers that interpret runs with [[VOCAB-SSN]].</p>
+            <ul>
+                <li><b>RDF property: </b><code>sosa:usedProcedure</code></li>
+                <li><b>Range: </b>[=simulation model=]</li>
+            </ul>
         </section>
 
+        <section id="run-wasAssociatedWith">
+            <h4>Property: was associated with (<code>prov:wasAssociatedWith</code>)</h4>
+            <p>The <dfn>was associated with</dfn> property of a [=simulation run=] refers to the software [=agent=], that is the exact release, that executed the run.</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:wasAssociatedWith</code></li>
+                <li><b>Range: </b>[=agent=]</li>
+            </ul>
+        </section>
+
+        <section id="run-startedAtTime">
+            <h4>Property: started at time (<code>prov:startedAtTime</code>)</h4>
+            <p>The <dfn>started at time</dfn> of a [=simulation run=] is the instant at which the run started.</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:startedAtTime</code></li>
+                <li><b>Range: </b>xsd:dateTime</li>
+            </ul>
+        </section>
+
+        <section id="run-endedAtTime">
+            <h4>Property: ended at time (<code>prov:endedAtTime</code>)</h4>
+            <p>The <dfn>ended at time</dfn> of a [=simulation run=] is the instant at which the run ended. It is absent while the run is still in progress.</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:endedAtTime</code></li>
+                <li><b>Range: </b>xsd:dateTime</li>
+            </ul>
+        </section>
+
+        <section id="prop-used">
+            <h4>Property: used (<code>prov:used</code>)</h4>
+            <p>The <dfn>used</dfn> property of a [=simulation run=] is a reference to one or more input datasets that were used. Every input dataset must adhere to one of the [=input schema=]s of the [=simulation model=], which is declared with <code>mocat:conformsToSpecification</code> on the dataset.</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:used</code></li>
+                <li><b>Range: </b>[=dataset=]</li>
+            </ul>
+        </section>
+
+        <section id="prop-generated">
+            <h4>Property: generated (<code>prov:generated</code>)</h4>
+            <p>The <dfn>generated</dfn> property of a [=simulation run=] is a reference to the output dataset(s) produced by the run. It is the inverse of <code>prov:wasGeneratedBy</code>. The output dataset must adhere to the [=output schema=] of the [=simulation model=].</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:generated</code></li>
+                <li><b>Range: </b>[=dataset=]</li>
+            </ul>
+        </section>
 
     </section>
-    <section data-dfn-for="Dataset">
+
+    <section id="class-agent" data-dfn-for="Agent">
+        <h3>Class: Agent (prov:SoftwareAgent)</h3>
+        <p>An <dfn>agent</dfn> is the software package (a specific release of the simulation software) that
+            executed a [=simulation run=]. Its class is <code>mocat:Agent</code>, a subclass of
+            <code>prov:SoftwareAgent</code> and <code>spdx-sw:Package</code> [[SPDX]]. Linking a run to the exact
+            release is essential to reproduce the run.</p>
+
+
+        <aside class="example" title="Agent">
+  <pre class="ttl">
+omg-agent:traffic-scout-v3-0
+    a                        mocat:Agent, prov:SoftwareAgent, spdx-sw:Package ;
+    foaf:name                "Traffic Scout"@en ;
+    spdx-sw:packageVersion   "3.0.4" ;
+    spdx-sw:packageUrl       "pkg:tmleuven.be/traffic-scout@3.0.4"^^xsd:anyURI ;
+    spdx-sw:downloadLocation &lt;https://intranet.tmleuven.be/tml-leuven/traffic-scout/releases/tag/v3.0.4&gt; ;
+    spdx-sw:homePage         &lt;https://intranet.tmleuven.be/tml-leuven/traffic-scout&gt; ;
+    spdx-sw:primaryPurpose   spdx-purpose:application .
+  </pre>
+        </aside>
+        <section id="agent-name">
+            <h4>Property: name (<code>foaf:name</code>)</h4>
+            <p>The <dfn>name</dfn> of an [=agent=] is the name of the software.</p>
+            <ul>
+                <li><b>RDF property: </b><code>foaf:name</code></li>
+                <li><b>Range: </b>rdf:langString</li>
+            </ul>
+        </section>
+
+        <section id="agent-version">
+            <h4>Property: package version (<code>spdx-sw:packageVersion</code>)</h4>
+            <p>The <dfn>package version</dfn> of an [=agent=] is the release version of the software that executed the run.</p>
+            <ul>
+                <li><b>RDF property: </b><code>spdx-sw:packageVersion</code></li>
+                <li><b>Range: </b>xsd:string</li>
+            </ul>
+        </section>
+
+        <section id="agent-purl">
+            <h4>Property: package URL (<code>spdx-sw:packageUrl</code>)</h4>
+            <p>The <dfn>package URL</dfn> of an [=agent=] is a package URL (purl) that identifies the release.</p>
+            <ul>
+                <li><b>RDF property: </b><code>spdx-sw:packageUrl</code></li>
+                <li><b>Range: </b>xsd:anyURI</li>
+            </ul>
+        </section>
+
+        <section id="agent-download">
+            <h4>Property: download location (<code>spdx-sw:downloadLocation</code>)</h4>
+            <p>The <dfn>download location</dfn> of an [=agent=] is the location from which the release can be downloaded. Not every provider has a public location; in the example it points to an intranet.</p>
+            <ul>
+                <li><b>RDF property: </b><code>spdx-sw:downloadLocation</code></li>
+                <li><b>Range: </b>xsd:anyURI</li>
+            </ul>
+        </section>
+
+        <section id="agent-homepage">
+            <h4>Property: home page (<code>spdx-sw:homePage</code>)</h4>
+            <p>The <dfn>home page</dfn> of an [=agent=] is the home page of the software.</p>
+            <ul>
+                <li><b>RDF property: </b><code>spdx-sw:homePage</code></li>
+                <li><b>Range: </b>xsd:anyURI</li>
+            </ul>
+        </section>
+
+        <section id="agent-purpose">
+            <h4>Property: primary purpose (<code>spdx-sw:primaryPurpose</code>)</h4>
+            <p>The <dfn>primary purpose</dfn> of an [=agent=] is the main purpose of the package, for example <code>spdx-purpose:application</code>.</p>
+            <ul>
+                <li><b>RDF property: </b><code>spdx-sw:primaryPurpose</code></li>
+                <li><b>Range: </b><code>spdx-sw:SoftwarePurpose</code></li>
+            </ul>
+        </section>
+
+    </section>
+
+    <section id="class-dataset" data-dfn-for="Dataset">
         <h3>Class: Dataset (dcat:Dataset)</h3>
-        <p>A <dfn>dataset</dfn> is defined in [[DCAT]] as a collection of data, published or curated by a single agent,
-            and available for access or download in one or more representations.</p>
+        <p>A <dfn>dataset</dfn> is defined in [[VOCAB-DCAT-3]] as a collection of data, published or curated by a
+            single agent, and available for access or download in one or more representations.
+            A dataset is a [=cataloged resource=].
+            In MoCAT, all inputs (network, demand matrix, run configuration, scenario) and outputs of a
+            [=simulation run=] are datasets.</p>
+
 
         <aside class="example" title="Input dataset">
-        <pre>
-omg-dataset:osm_tn_dataset
-    a                            dcat:Dataset ;
-    dcterms:title                "OpenStreetMap transport network"@en ;
-    dcterms:description          """This dataset contains a routable transport network
-that was derived from OpenStreetMap data."""@en ;
-    dcat:keyword                 "transport network"@en, "OpenStreetMap"@en ;
-    dcat:theme                   &gt;http://publications.europa.eu/resource/authority/data-theme/TRAN&lt; ;
-    dcterms:publisher            ex:OMG ;
-    dcterms:issued               "2024-01-01"^^xsd:date ;
-    dcterms:modified             "2026-06-01"^^xsd:date ;
-    dcat:distribution            omg-distribution:osm_tn_geojson ;
-    dcterms:conformsTo           omg-schema:TransportNetworkSchema ;
-    p-plan:correspondsToVariable omg-schema:TransportNetworkSchema ;
-    prov:wasGeneratedBy          omg-simulationrun:abc123 ;
-    prov:wasDerivedFrom          omg-dataset:osm_raw_dataset .
+        <pre class="ttl">
+omg-dataset:xcite-kortrijk-network
+    a                             dcat:Dataset ;
+    dcterms:title                 "xCite Kortrijk Transport network"@en ;
+    dcterms:description           """This dataset contains a routable transport network extended with traffic-light control schemes and local information."""@en ;
+    dcat:keyword                  "transport network"@en, "OpenStreetMap"@en ;
+    dcat:theme                    &lt;http://publications.europa.eu/resource/authority/data-theme/TRAN&gt; ;
+    dcat:theme                    &lt;http://www.eionet.europa.eu/gemet/concept/11087&gt; ;
+    dcat:theme                    &lt;http://www.eionet.europa.eu/gemet/concept/7702&gt; ;
+    dcterms:publisher             ex:TML ;
+    dcterms:issued                "2024-01-01"^^xsd:date ;
+    dcterms:modified              "2026-06-01"^^xsd:date ;
+    dcat:distribution             omg-distribution:xcite-kortrijk-network-geojson ;
+    mocat:conformsToSpecification omg-schema:TransportNetworkSchema ;
+    p-plan:correspondsToVariable  omg-schema:TransportNetworkSchema .
 
-omg-distribution:osm_tn_geojson
-    a                dcat:Distribution ;
-    dcterms:title    "OSM transport network GeoJSON"@en ;
-    dcterms:format   &gt;http://publications.europa.eu/resource/authority/file-type/GEOJSON&lt; ;
-    dcat:accessURL   &gt;https://data.omgeving.vlaanderen.be/id/dataset/osm_tn_dataset&lt; ;
-    dcat:downloadURL &gt;https://data.omgeving.vlaanderen.be/files/osm_tn_dataset.geojson&lt; .
-
+omg-dataset:run-001-traffic-change-scenario
+    a                             dcat:Dataset ;
+    dcterms:title                 "Traffic Scout run 001 traffic change scenario — Kortrijk 2026-06-01"@en ;
+    dcat:distribution             omg-distribution:run-001-traffic-change-scenario-geojson ;
+    mocat:conformsToSpecification omg-schema:TrafficChangeScenarioSchema ;
+    p-plan:correspondsToVariable  omg-schema:TrafficChangeScenarioSchema ;
+    prov:wasDerivedFrom           omg-dataset:xcite-kortrijk-network .
         </pre>
         </aside>
 
+        <aside class="example" title="Output dataset">
+        <pre class="ttl">
+omg-dataset:traffic-scout-output-run-001
+    a                             dcat:Dataset ;
+    dcterms:title                 "Traffic Scout simulation output — Kortrijk 2026-06-01"@en ;
+    dcterms:description           "Simulated traffic flow counts per road segment for Kortrijk on 2026-06-01."@en ;
+    dcterms:publisher             ex:OMG ;
+    dcterms:issued                "2026-06-01"^^xsd:date ;
+    dcat:distribution             omg-distribution:traffic-scout-output-run-001-geojson ;
+    mocat:conformsToSpecification omg-schema:SimulationOutputSchema ;
+    p-plan:correspondsToVariable  omg-schema:SimulationOutputSchema ;
+    prov:wasGeneratedBy           omg-simulationrun:run-001 .
+        </pre>
+        </aside>
 
-        <section data-dfn-for="wasGeneratedBy">
-            <h4>Property: was generated by (prov:wasGeneratedBy)</h4>
-            <p>The <dfn>was generated by</dfn> property of a [=dataset=] is a reference to the [=simulation run=] that
-                generated the output dataset. </p>.
-            This output dataset must adhere to the [=output schema=] of the [=simulation model=].</p>
+        <section id="ds-distribution">
+            <h4>Property: has distribution (<code>dcat:distribution</code>)</h4>
+            <p>The <dfn>has distribution</dfn> property of a [=dataset=] refers to an available representation of the dataset, for example a downloadable GeoJSON file.</p>
+            <ul>
+                <li><b>RDF property: </b><code>dcat:distribution</code></li>
+                <li><b>Range: </b>[=distribution=]</li>
+            </ul>
         </section>
 
-        <section data-dfn-for="conformsTo">
-            <h4>Property: conforms to (dcterms:conformsTo)</h4>
-            <p>The <dfn>conforms to</dfn> property of a [=dataset=] is a reference to the [=data specification=]
-                the dataset adheres to. </p>.</p>
+        <section id="prop-conformsto">
+            <h4>Property: conforms to specification (<code>mocat:conformsToSpecification</code>)</h4>
+            <p>The <dfn>conforms to specification</dfn> property of a [=dataset=] is a reference to the [=data specification=] the dataset adheres to. It is a sub-property of <code>dcterms:conformsTo</code>, so that generic DCAT consumers can still interpret it.</p>
+            <ul>
+                <li><b>RDF property: </b><code>mocat:conformsToSpecification</code></li>
+                <li><b>Range: </b>[=data specification=]</li>
+            </ul>
         </section>
 
+        <section id="ds-correspondsToVariable">
+            <h4>Property: corresponds to variable (<code>p-plan:correspondsToVariable</code>)</h4>
+            <p>The <dfn>corresponds to variable</dfn> property of a [=dataset=] relates the dataset to the P-PLAN variable (the [=data specification=]) that it instantiates. In the example it always has the same value as <code>mocat:conformsToSpecification</code>.</p>
+            <ul>
+                <li><b>RDF property: </b><code>p-plan:correspondsToVariable</code></li>
+                <li><b>Range: </b>[=data specification=]</li>
+            </ul>
+        </section>
+
+        <section id="prop-wasgeneratedby">
+            <h4>Property: was generated by (<code>prov:wasGeneratedBy</code>)</h4>
+            <p>The <dfn>was generated by</dfn> property of a [=dataset=] is a reference to the [=simulation run=] that generated the output dataset. This output dataset must adhere to the [=output schema=] of the [=simulation model=]. Producers should assert both <code>prov:wasGeneratedBy</code> on the dataset and <code>prov:generated</code> on the run, as consumers may traverse either direction.</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:wasGeneratedBy</code></li>
+                <li><b>Range: </b>[=simulation run=]</li>
+            </ul>
+        </section>
+
+        <section id="ds-wasDerivedFrom">
+            <h4>Property: was derived from (<code>prov:wasDerivedFrom</code>)</h4>
+            <p>The <dfn>was derived from</dfn> property of a [=dataset=] refers to a dataset from which it was derived, for example a scenario dataset derived from the transport network it modifies.</p>
+            <ul>
+                <li><b>RDF property: </b><code>prov:wasDerivedFrom</code></li>
+                <li><b>Range: </b>[=dataset=]</li>
+            </ul>
+        </section>
+
+    </section>
+
+    <section id="class-distribution" data-dfn-for="Distribution">
+        <h3>Class: Distribution (dcat:Distribution)</h3>
+        <p>A <dfn>distribution</dfn> is a concrete representation of a [=dataset=] (e.g. a downloadable file).</p>
+        <table class="simple">
+            <thead>
+            <tr><th>Property</th><th>Range</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+            <tr><td><code>dcterms:title</code></td><td>rdf:langString</td><td>Name of the distribution.</td></tr>
+            <tr><td><code>dcterms:format</code></td><td>dcterms:MediaTypeOrExtent</td><td>File type, from the EU file-type authority list (e.g. GEOJSON, CSV, JSON).</td></tr>
+            <tr><td><code>dcat:accessURL</code></td><td>rdfs:Resource</td><td>Page or endpoint giving access to the data.</td></tr>
+            <tr><td><code>dcat:downloadURL</code></td><td>rdfs:Resource</td><td>Direct download location.</td></tr>
+            </tbody>
+        </table>
+        <aside class="example" title="Distribution">
+        <pre class="ttl">
+omg-distribution:xcite-kortrijk-network-geojson
+    a                dcat:Distribution ;
+    dcterms:title    "xCite Kortrijk Transport network - GeoJSON"@en ;
+    dcterms:format   &lt;http://publications.europa.eu/resource/authority/file-type/GEOJSON&gt; ;
+    dcat:accessURL   &lt;https://data.omgeving.vlaanderen.be/id/dataset/xcite-kortrijk-network&gt; ;
+    dcat:downloadURL &lt;https://data.omgeving.vlaanderen.be/files/xcite-kortrijk-network.geojson&gt; .
+        </pre>
+        </aside>
     </section>
 
 </section>
 
 <section id="oas" class="normative">
     <h2>Open API specification</h2>
-    <p>
-
+    <p>The Simulation Model API makes it possible to configure and start a [=simulation run=] of a
+        [=simulation model=] in a standardized way. Execution is asynchronous (see <a href="#uc-api"></a>).
+        The API is described below with OpenAPI.
     </p>
     <div style="position:relative; width:500px; height:500px;">
         <iframe width="500px" height="500px" src="swagger-editor.html"
@@ -775,20 +1264,18 @@ omg-distribution:osm_tn_geojson
 </section>
 
 <section id="implementation" class="informative">
-    <h1>Implementation report</h1>
-
+    <h2>Implementation report</h2>
 
     <section id="metadata-creation">
         <h3>Metadata creation</h3>
 
-        <p>Departement Omgeving wants to have an overview of all simulation models that are used in for public service
+        <p>Departement Omgeving wants to have an overview of all simulation models that are used in public service
             delivery. Simulation models are mainly used for environmental impact assessment.
         </p>
 
         <p>
             We will incorporate the creation of metadata for simulation models by embedding this in the software
-            development
-            lifecycle of the simulation model.
+            development lifecycle of the simulation model.
             A release of a new version of the simulation model by the software build engine will trigger
             the creation of a new metadata record that will be included in a Triplestore.
             The triple store is schema-free and enables various use cases.
@@ -796,17 +1283,18 @@ omg-distribution:osm_tn_geojson
         </p>
         <p>
             Metadata will be available on the Linked Data service of Departement Omgeving at
-            <a href="https://data.omgeving.vlaanderen.be/#sparqlForm">https://data.omgeving.vlaanderen.be/sparql</a>.
+            <a href="https://data.omgeving.vlaanderen.be/#sparqlForm">https://data.omgeving.vlaanderen.be/#sparqlForm</a>.
             The metadata can there be explored from a plain SPARQL interface.
-
         </p>
 
         <aside class="example" title="SPARQL query">
         <pre>
-PREFIX prov: &lt,http://www.w3.org/ns/prov#&gt;
+PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;
 SELECT ?s ?p ?o
-WHERE {?s a prov:Plan.
-?s ?p ?o}
+WHERE {
+  ?s a prov:Plan .
+  ?s ?p ?o
+}
         </pre>
         </aside>
 
@@ -829,17 +1317,17 @@ graph LR
         </figure>
     </section>
 
-    <h3>Metadata publication and harvesting</h3>
+    <section id="metadata-publication">
+        <h3>Metadata publication and harvesting</h3>
 
-    <p>We will publish a limited subset of the metadata as ISO19115 metadata records using the Geonetwork catalog.
-        This catalog provides a configurable facetted search functionality via ElasticSearch.
-        The catalog has standard APIs that are used to harvest metadata records.
-        One downside of the use of ISO19115 metadata records is that not all metadata fields in MoCAT can be mapped to
-        this standard.
-    </p>
+        <p>We will publish a limited subset of the metadata as ISO19115 metadata records using the Geonetwork catalog.
+            This catalog provides a configurable facetted search functionality via ElasticSearch.
+            The catalog has standard APIs that are used to harvest metadata records.
+            One downside of the use of ISO19115 metadata records is that not all metadata fields in MoCAT can be
+            mapped to this standard.
+        </p>
 
-
-    <figure>
+        <figure>
   <pre class="diagram mermaid">
 ---
 config:
@@ -857,19 +1345,26 @@ graph LR
     triplestore --> lod_endpoint
     lod_endpoint --> geonetwork
   </pre>
-        <figcaption>Metadata publication</figcaption>
-    </figure>
+            <figcaption>Metadata publication</figcaption>
+        </figure>
+    </section>
 
+    <section id="impl-interoperability">
+        <h3>Test interoperability of input data</h3>
+        <p>For each input of a simulation model, the [=data specification=] contains SHACL shapes. A dataset is
+            interoperable with an input of the model if it declares <code>mocat:conformsToSpecification</code>
+            with the expected data specification and its RDF representation validates against the referenced shapes
+            (including the SHACL-SPARQL constraints). For non-RDF distributions (GeoJSON, CSV, JSON), the
+            distribution is first converted to RDF before validation.</p>
+    </section>
 
-    <h3>Test interoperability of input data</h3>
+    <section id="impl-api">
+        <h3>Start a simulation run via a universal interface</h3>
 
+        <p>We will implement the Simulation Model API to start simulation runs and assess the impact of scenarios of
+            future land use change on emission of greenhouse gasses.</p>
 
-    <h3>Start a simulation run via a universal interface</h3>
-
-    We will implement the Simulation Model API to start simulation runs and assess the impact of scenarios of future land
-    use change on emission of greenhouse gasses.
-
-    <figure>
+        <figure>
     <pre class="diagram mermaid">
 ---
 config:
@@ -923,8 +1418,9 @@ flowchart LR
     driver --> crt
 
     </pre>
-        <figcaption>Start a simulation run</figcaption>
-    </figure>
+            <figcaption>Start a simulation run</figcaption>
+        </figure>
+    </section>
 
 </section>
 
