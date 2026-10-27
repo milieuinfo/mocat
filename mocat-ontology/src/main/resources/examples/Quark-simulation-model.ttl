@@ -1,0 +1,73 @@
+# =============================================================================
+# MoCAT example — QUARK (Quick Urban AiR quality using Kernels)
+#
+# Source: https://atmosys.vito.be/en/quark
+# Only the PLAN layer is described: the SimulationModel, its publisher (VITO),
+# a catalog entry and minimal, non-elaborated DataSpecifications.
+# The EXECUTION layer (SimulationRun, Agent) and the DATA layer axre intentionally left out.
+# =============================================================================
+
+@prefix mocat:               <http://example.org/ontology/mocat#> .
+@prefix omg-simulationmodel: <https://data.omgeving.vlaanderen.be/id/simulationmodel/> .
+@prefix omg-schema:          <https://data.omgeving.vlaanderen.be/id/schema/> .
+@prefix omg-catalog:         <https://data.omgeving.vlaanderen.be/id/catalog/> .
+@prefix dcat:                <http://www.w3.org/ns/dcat#> .
+@prefix dcterms:             <http://purl.org/dc/terms/> .
+@prefix foaf:                <http://xmlns.com/foaf/0.1/> .
+@prefix p-plan:              <http://purl.org/net/p-plan#> .
+@prefix prov:                <http://www.w3.org/ns/prov#> .
+@prefix rdfs:                <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:                 <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:                  <http://example.org/> .
+
+
+# ── Organisation ─────────────────────────────────────────────────────────────
+
+ex:VITO
+    a         foaf:Organization, prov:Agent ;
+    foaf:name "VITO NV"@en ;
+    foaf:page <https://vito.be> .
+
+
+# ── Catalogue ────────────────────────────────────────────────────────────────
+
+omg-catalog:OpenDataCatalogue
+    a                 dcat:Catalog ;
+    dcterms:title     "Catalogue of Simulation Models"@en ;
+    dcterms:publisher ex:OMG ;
+    mocat:model       omg-simulationmodel:quark .
+
+
+# ── PLAN LAYER ───────────────────────────────────────────────────────────────
+
+omg-simulationmodel:quark
+    a                   mocat:SimulationModel, prov:Plan, p-plan:Step ;
+    dcterms:title       "QUARK Air Quality simulation model"@en ;
+    dcterms:description """QUARK (Quick Urban AiR quality using Kernels) is a modelling approach developed by VITO for the fast calculation of urban air quality assessments at a high spatial resolution.
+QUARK models pollution levels down to street level (100 m) according to the European standard. It is a light version of the ATMO-Street model: based on the underlying ATMO-Street methodology and applying pre-calculated kernels, it allows fast modelling of the whole EU at a high spatial resolution.
+The methodology has been refined to achieve an improved methodology for NO2 exposure assessment at EU scale. The model is also extensively applied in NO2 source apportionment studies for road traffic emissions in all of Europe's main cities."""@en ;
+    dcat:landingPage    <https://atmosys.vito.be/en/quark> ;
+    dcat:landingPage    <https://mapbase.marvin.vito.be/layers?config=atmosysmaps&layers=atmosysmaps%3Aeu_2010_cor_no2_wgs84_round&lat=50.05795100085644&lon=10.460376150741377&zoom=5&baselayer=street-map> ;
+    dcat:keyword        "air quality"@en, "urban air quality"@en, "NO2"@en, "exposure assessment"@en,
+                        "source apportionment"@en, "road traffic emissions"@en, "kernels"@en, "simulation"@en ;
+    dcterms:publisher   ex:VITO ;
+    dcat:theme          <http://publications.europa.eu/resource/authority/data-theme/ENVI> ;
+    dcat:theme          <http://www.eionet.europa.eu/gemet/concept/270> ;
+    dcat:theme          <http://www.eionet.europa.eu/gemet/concept/7702> ;
+    rdfs:seeAlso        <https://atmosys.vito.be/en/atmo-street> ;
+    mocat:input         omg-schema:QuarkInputSchema ;
+    mocat:output        omg-schema:QuarkOutputSchema .
+
+
+# ── DataSpecifications (p-plan:Variable) — not elaborated ────────────────────
+# The SHACL shapes (dcterms:hasPart) are not yet defined.
+
+omg-schema:QuarkInputSchema
+    a                   p-plan:Variable ;
+    dcterms:title       "QUARK input schema"@en ;
+    dcterms:description "The schema of the input data of the QUARK model. To be elaborated."@en .
+
+omg-schema:QuarkOutputSchema
+    a                   p-plan:Variable ;
+    dcterms:title       "QUARK output schema"@en ;
+    dcterms:description "The schema of the output of the QUARK model: annual average concentration maps (for example NO2) at 100 m resolution. To be elaborated."@en .
