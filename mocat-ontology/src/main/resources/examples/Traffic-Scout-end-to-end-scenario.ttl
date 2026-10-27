@@ -41,7 +41,7 @@
 ex:TML
     a             foaf:Organization, prov:Agent ;
     foaf:name     "Transport & Mobility Leuven"@en ;
-    org:identifer "BE0476.966.024" ;
+    org:identifier "BE0476.966.024" ;
     foaf:page     <https://www.tmleuven.be> .
 
 ex:OMG
