@@ -33,13 +33,16 @@
 @prefix xsd:                 <http://www.w3.org/2001/XMLSchema#> .
 @prefix ex:                  <http://example.org/> .
 @prefix owl:                 <http://www.w3.org/2002/07/owl#> .
+@prefix org:                 <http://www.w3.org/ns/org#> .
 
 
 # ── Organisations ────────────────────────────────────────────────────────────
 
 ex:TML
-    a         foaf:Organization, prov:Agent ;
-    foaf:name "Transport & Mobility Leuven"@en .
+    a             foaf:Organization, prov:Agent ;
+    foaf:name     "Transport & Mobility Leuven"@en ;
+    org:identifer "BE0476.966.024" ;
+    foaf:page     <https://www.tmleuven.be> .
 
 ex:OMG
     a         foaf:Organization, prov:Agent ;
